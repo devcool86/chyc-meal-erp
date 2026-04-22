@@ -3,49 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <meta name="theme-color" content="#1A2A5E">
-    <title>CHYC-MEAL ERP v4.7</title>
-    
+    <title>CHYC-MEAL ERP v4.8</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
-    
     <style>
         :root { --navy: #1A2A5E; --gold: #B8972A; --bg: #EEF2FA; --card: #fff; --r: 14px; }
         body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
         header { background: #0F1B42; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .logo-box { display: flex; align-items: center; gap: 10px; }
-        .logo-circle { background: var(--gold); color: #0F1B42; padding: 8px; border-radius: 8px; font-weight: 800; }
         #sync-status { font-size: 0.6rem; font-weight: 800; border-radius: 20px; padding: 4px 10px; background: rgba(255,255,255,0.1); }
         .nav-tabs { display: flex; background: var(--navy); padding: 5px; position: sticky; top: 60px; z-index: 90; }
-        .tab { flex: 1; text-align: center; padding: 12px; color: #A8C0D8; font-size: 0.75rem; font-weight: 600; cursor: pointer; border-radius: 8px; }
-        .tab.active { background: #243470; color: #fff; box-shadow: inset 0 0 0 1px var(--gold); }
+        .tab { flex: 1; text-align: center; padding: 12px; color: #A8C0D8; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+        .tab.active { background: #243470; color: #fff; box-shadow: inset 0 0 0 1px var(--gold); border-radius: 8px; }
         .container { padding: 20px; max-width: 1000px; margin: 0 auto; }
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { background: var(--card); padding: 18px; border-radius: var(--r); border-left: 4px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .kpi-val { display: block; font-size: 1.25rem; font-weight: 800; }
-        .kpi-lab { font-size: 0.6rem; color: #6E8CB5; text-transform: uppercase; margin-top: 4px; display: block; }
+        .kpi-val { display: block; font-size: 1.2rem; font-weight: 800; }
         .card { background: var(--card); border-radius: var(--r); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .btn { background: var(--navy); color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; width: 100%; display: flex; justify-content: center; text-decoration: none; align-items: center; gap: 8px; }
-        .btn-pdf { background: #334155; font-size: 0.75rem; margin-bottom: 15px; }
-        .chart-box { height: 250px; position: relative; }
         .section { display: none; }
         .section.active { display: block; }
         table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-        td { padding: 12px 0; border-bottom: 1px solid #F8FAFC; }
-        footer { text-align: center; padding: 30px; font-size: 0.65rem; color: #6E8CB5; }
+        td { padding: 10px 0; border-bottom: 1px solid #F8FAFC; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-box">
-        <div class="logo-circle">CH</div>
-        <div>
-            <div style="font-weight: 800; font-size: 0.9rem;">CHYC-MEAL</div>
-            <div id="sync-status">Vérification...</div>
-        </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div style="background:var(--gold); color:#0F1B42; padding:8px; border-radius:8px; font-weight:800;">CH</div>
+        <div style="font-weight:800; font-size:0.9rem;">CHYC-MEAL</div>
     </div>
+    <div id="sync-status">Connexion...</div>
 </header>
 
 <div class="nav-tabs">
@@ -56,109 +45,99 @@
 
 <div class="container">
     <div id="dash" class="section active">
-        <button onclick="genererPDF()" class="btn btn-pdf">📄 GÉNÉRER RAPPORT PDF</button>
-        
+        <button onclick="genererPDF()" class="btn" style="background:#334155; font-size:0.75rem; margin-bottom:15px;">📄 GÉNÉRER RAPPORT PDF</button>
         <div class="kpi-grid">
-            <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span class="kpi-lab">Bénéficiaires</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span class="kpi-lab">Ratio Femmes</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0 F</span><span class="kpi-lab">Budget Engagé</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span class="kpi-lab">Activités</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span style="font-size:0.6rem; color:#6E8CB5;">Bénéficiaires</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span style="font-size:0.6rem; color:#6E8CB5;">Ratio Femmes</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0 F</span><span style="font-size:0.6rem; color:#6E8CB5;">Budget Engagé</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span style="font-size:0.6rem; color:#6E8CB5;">Activités</span></div>
         </div>
-
         <div class="card">
-            <h2 style="font-size:0.8rem;">Répartition par Secteur</h2>
-            <div class="chart-box"><canvas id="pieChart"></canvas></div>
+            <h2 style="font-size:0.8rem; margin:0 0 15px 0;">Secteurs d'Intervention</h2>
+            <div style="height:250px;"><canvas id="pieChart"></canvas></div>
         </div>
     </div>
 
     <div id="data" class="section">
         <div class="card">
-            <h2 style="font-size:0.8rem;">Flux en Temps Réel</h2>
+            <h2>Données Terrain</h2>
             <table><tbody id="table-body"></tbody></table>
         </div>
     </div>
 
-    <div id="form" class="section" style="text-align: center;">
+    <div id="form" class="section" style="text-align:center;">
         <div class="card">
-            <div style="font-size: 3rem; margin-bottom: 10px;">📡</div>
-            <h2>Accès Terrain</h2>
+            <div style="font-size:3rem;">📡</div>
+            <h2>Accès Kobo</h2>
             <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn" style="background:var(--gold); color:#000;">NOUVEAU RAPPORT</a>
         </div>
     </div>
 </div>
 
-<footer>© 2026 CHYC CONSULTING — Saint-Louis, Sénégal</footer>
-
 <script>
+    // --- CONFIGURATION À VÉRIFIER ---
     const TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
-    // MISE À JOUR DE L'ID BASÉ SUR VOTRE LIEN
+    // L'ID que vous avez fourni dans votre lien
     const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK'; 
     
     async function syncSaaS() {
         const status = document.getElementById('sync-status');
-        const koboUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json?nocache=${Date.now()}`;
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(koboUrl)}`;
+        // Test direct via AllOrigins
+        const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
 
         try {
             const response = await fetch(proxyUrl);
-            const rawData = await response.json();
-            const data = JSON.parse(rawData.contents);
+            const json = await response.json();
+            const data = JSON.parse(json.contents);
             
             if(data && data.results) {
                 processData(data.results);
-                status.innerText = '✅ CONNECTÉ (LIVE)';
+                status.innerText = '✅ CONNECTÉ';
                 status.style.color = '#4ade80';
             } else {
-                status.innerText = '⚠️ AUCUNE DONNÉE';
+                status.innerText = '⚠️ VIDE';
             }
         } catch (e) {
-            status.innerText = '⚠️ ERREUR IDENTIFIANT';
+            status.innerText = '⚠️ ERREUR ID';
             status.style.color = '#f87171';
         }
     }
 
     function processData(results) {
-        let totalBen = 0, totalF = 0, budget = 0, secteurs = {};
+        let ben = 0, femmes = 0, cash = 0, secteurs = {};
         const tbody = document.getElementById('table-body');
         tbody.innerHTML = '';
 
         results.forEach((r, i) => {
-            const benH = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || r.nb_consultations || 0);
-            const benF = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
-            totalBen += (benH + benF);
-            totalF += benF;
-            budget += parseInt(r.montant_depense || 0);
-            
-            let s = r.secteur_projet || 'Autre';
+            const h = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || 0);
+            const f = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
+            ben += (h + f);
+            femmes += f;
+            cash += parseInt(r.montant_depense || 0);
+            let s = (r.secteur_projet || 'Autre').toUpperCase();
             secteurs[s] = (secteurs[s] || 0) + 1;
 
             if(i < 10) {
-                tbody.innerHTML += `<tr>
-                    <td>${new Date(r._submission_time).toLocaleDateString()}</td>
-                    <td><b>${r.zone_intervention || 'N/A'}</b></td>
-                    <td style="text-align:right; color:var(--gold)">${s.toUpperCase()}</td>
-                </tr>`;
+                tbody.innerHTML += `<tr><td>${new Date(r._submission_time).toLocaleDateString()}</td><td><b>${r.zone_intervention || '-'}</b></td><td style="text-align:right; color:var(--gold)">${s}</td></tr>`;
             }
         });
 
-        document.getElementById('kpi-ben').innerText = totalBen.toLocaleString();
-        document.getElementById('kpi-budget').innerText = budget.toLocaleString() + ' F';
+        document.getElementById('kpi-ben').innerText = ben.toLocaleString();
+        document.getElementById('kpi-budget').innerText = cash.toLocaleString() + ' F';
         document.getElementById('kpi-form').innerText = results.length;
-        document.getElementById('kpi-genre').innerText = totalBen > 0 ? Math.round((totalF/totalBen)*100)+'%' : '0%';
+        document.getElementById('kpi-genre').innerText = ben > 0 ? Math.round((femmes/ben)*100)+'%' : '0%';
         renderPie(secteurs);
     }
 
     function renderPie(secteurs) {
         const ctx = document.getElementById('pieChart').getContext('2d');
-        if(pieChart) pieChart.destroy();
-        pieChart = new Chart(ctx, {
+        if(window.myChart) window.myChart.destroy();
+        window.myChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: Object.keys(secteurs).map(s => s.toUpperCase()),
-                datasets: [{
-                    data: Object.values(secteurs),
-                    backgroundColor: ['#1A2A5E', '#B8972A', '#6E8CB5', '#A8C0D8', '#E8F5EE']
-                }]
+                labels: Object.keys(secteurs),
+                datasets: [{ data: Object.values(secteurs), backgroundColor: ['#1A2A5E','#B8972A','#6E8CB5','#A8C0D8','#E8F5EE'] }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
@@ -166,16 +145,8 @@
 
     async function genererPDF() {
         const element = document.getElementById('dash');
-        const btn = document.querySelector('.btn-pdf');
-        btn.style.display = 'none';
-        const opt = {
-            margin: 10,
-            filename: 'Rapport_CHYC_MEAL.pdf',
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        try { await html2pdf().set(opt).from(element).save(); } 
-        finally { btn.style.display = 'flex'; }
+        const opt = { margin: 10, filename: 'Rapport_CHYC.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
+        html2pdf().set(opt).from(element).save();
     }
 
     function switchTab(id, el) {
