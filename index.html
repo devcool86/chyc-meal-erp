@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="theme-color" content="#1A2A5E">
-    <title>CHYC-MEAL ERP v4.6</title>
+    <title>CHYC-MEAL ERP v4.7</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -43,7 +43,7 @@
         <div class="logo-circle">CH</div>
         <div>
             <div style="font-weight: 800; font-size: 0.9rem;">CHYC-MEAL</div>
-            <div id="sync-status">Initialisation...</div>
+            <div id="sync-status">Vérification...</div>
         </div>
     </div>
 </header>
@@ -73,7 +73,7 @@
 
     <div id="data" class="section">
         <div class="card">
-            <h2 style="font-size:0.8rem;">Derniers Flux Terrain</h2>
+            <h2 style="font-size:0.8rem;">Flux en Temps Réel</h2>
             <table><tbody id="table-body"></tbody></table>
         </div>
     </div>
@@ -81,7 +81,7 @@
     <div id="form" class="section" style="text-align: center;">
         <div class="card">
             <div style="font-size: 3rem; margin-bottom: 10px;">📡</div>
-            <h2>Accès KoboToolbox</h2>
+            <h2>Accès Terrain</h2>
             <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn" style="background:var(--gold); color:#000;">NOUVEAU RAPPORT</a>
         </div>
     </div>
@@ -91,14 +91,12 @@
 
 <script>
     const TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
-    const ASSET_ID = 'AnJWsYbZiGvWEz3ZjmwcqY';
+    // MISE À JOUR DE L'ID BASÉ SUR VOTRE LIEN
+    const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK'; 
     
     async function syncSaaS() {
         const status = document.getElementById('sync-status');
-        // Ajout du nocache pour forcer la mise à jour
         const koboUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json?nocache=${Date.now()}`;
-        
-        // On essaie AllOrigins en premier
         const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(koboUrl)}`;
 
         try {
@@ -110,10 +108,11 @@
                 processData(data.results);
                 status.innerText = '✅ CONNECTÉ (LIVE)';
                 status.style.color = '#4ade80';
+            } else {
+                status.innerText = '⚠️ AUCUNE DONNÉE';
             }
         } catch (e) {
-            console.error("Erreur de connexion:", e);
-            status.innerText = '⚠️ MODE HORS-LIGNE';
+            status.innerText = '⚠️ ERREUR IDENTIFIANT';
             status.style.color = '#f87171';
         }
     }
@@ -124,10 +123,8 @@
         tbody.innerHTML = '';
 
         results.forEach((r, i) => {
-            // Mapping basé sur votre XLSForm v2.0
             const benH = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || r.nb_consultations || 0);
             const benF = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
-            
             totalBen += (benH + benF);
             totalF += benF;
             budget += parseInt(r.montant_depense || 0);
@@ -148,7 +145,6 @@
         document.getElementById('kpi-budget').innerText = budget.toLocaleString() + ' F';
         document.getElementById('kpi-form').innerText = results.length;
         document.getElementById('kpi-genre').innerText = totalBen > 0 ? Math.round((totalF/totalBen)*100)+'%' : '0%';
-
         renderPie(secteurs);
     }
 
