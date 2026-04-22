@@ -6,18 +6,12 @@
     <meta name="theme-color" content="#1A2A5E">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="CHYC-MEAL">
-    
     <title>CHYC-MEAL ERP - CHYC CONSULTING</title>
 
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js');
-      }
-    </script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -25,71 +19,32 @@
             --gold: #B8972A; --gold-l: #D4AF45;
             --steel: #6E8CB5; --steel-l: #A8C0D8;
             --bg: #EEF2FA; --card: #fff;
-            --ok: #1A7A4A; --ok-bg: #E8F5EE;
-            --warn: #C07A10; --warn-bg: #FEF3E2;
-            --err: #C0281A; --err-bg: #FDE8E6;
-            --r: 14px; --shadow: 0 4px 12px rgba(15,27,66,0.08);
+            --ok: #1A7A4A; --r: 14px; --shadow: 0 4px 12px rgba(15,27,66,0.08);
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); 
-            line-height: 1.5; overflow-x: hidden;
-        }
-
-        header {
-            background: var(--navy-d); color: #fff; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-
+        body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); overflow-x: hidden; }
+        header { background: var(--navy-d); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo-box { display: flex; align-items: center; gap: 12px; }
-        .logo-circle { 
-            width: 40px; height: 40px; background: var(--gold); border-radius: 10px;
-            display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--navy-d);
-        }
-        
-        .nav-tabs {
-            display: flex; background: var(--navy); padding: 5px; gap: 5px;
-            position: sticky; top: 70px; z-index: 90;
-        }
-        .tab {
-            flex: 1; text-align: center; padding: 10px; color: var(--steel-l);
-            font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer;
-        }
+        .logo-circle { width: 40px; height: 40px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--navy-d); }
+        .nav-tabs { display: flex; background: var(--navy); padding: 5px; position: sticky; top: 70px; z-index: 90; }
+        .tab { flex: 1; text-align: center; padding: 10px; color: var(--steel-l); font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer; }
         .tab.active { background: var(--navy-m); color: #fff; box-shadow: inset 0 0 0 1px var(--gold); }
-
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
         .kpi-card { background: var(--card); padding: 15px; border-radius: var(--r); box-shadow: var(--shadow); border-left: 4px solid var(--gold); }
-        .kpi-val { display: block; font-size: 1.3rem; font-weight: 800; color: var(--navy); }
-        .kpi-lab { font-size: 0.65rem; color: var(--steel); text-transform: uppercase; letter-spacing: 0.5px; }
-
+        .kpi-val { display: block; font-size: 1.3rem; font-weight: 800; }
+        .kpi-lab { font-size: 0.6rem; color: var(--steel); text-transform: uppercase; }
         .section { display: none; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .card { background: var(--card); border-radius: var(--r); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
-        h2 { font-size: 1rem; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--navy-d); }
+        h2 { font-size: 0.9rem; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; }
         h2::before { content: ''; width: 4px; height: 18px; background: var(--gold); border-radius: 2px; }
-
-        .chart-container { position: relative; height: 250px; width: 100%; margin-bottom: 10px; }
-
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-        .badge-wash { background: #E3F2FD; color: #1976D2; }
-        .badge-agri { background: #E8F5EE; color: #1B5E20; }
-        .badge-prot { background: #FFF3E0; color: #E65100; }
-
-        .btn {
-            background: var(--navy); color: #fff; border: none; padding: 15px 20px;
-            border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%;
-            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.2s; text-decoration: none; font-size: 1rem;
-        }
+        .chart-box { position: relative; height: 220px; }
+        .btn { background: var(--navy); color: #fff; padding: 15px; border-radius: 12px; font-weight: 700; display: flex; justify-content: center; text-decoration: none; }
         .btn-gold { background: var(--gold); color: var(--navy-d); }
-
-        footer { text-align: center; padding: 30px; font-size: 0.75rem; color: var(--steel); }
+        footer { text-align: center; padding: 20px; font-size: 0.7rem; color: var(--steel); }
+        #sync-loader { font-size: 0.6rem; color: var(--gold); margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -98,51 +53,44 @@
     <div class="logo-box">
         <div class="logo-circle">CH</div>
         <div>
-            <div style="font-weight: 800; font-size: 1.1rem; line-height: 1.1;">CHYC-MEAL</div>
-            <div style="font-size: 0.65rem; color: var(--gold-l); letter-spacing: 1px;">CHYC CONSULTING</div>
+            <div style="font-weight: 800; font-size: 1rem;">CHYC-MEAL</div>
+            <div style="font-size: 0.6rem; color: var(--gold-l);">SYSTEME SAAS AUTOMATISÉ</div>
         </div>
     </div>
-    <div style="font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;">v4.0 PRO</div>
+    <div id="sync-status" style="font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;">Synchronisé</div>
 </header>
 
 <div class="nav-tabs">
     <div class="tab active" onclick="switchTab('dash', this)">DASHBOARD</div>
-    <div class="tab" onclick="switchTab('data', this)">DONNÉES</div>
+    <div class="tab" onclick="switchTab('data', this)">HISTORIQUE</div>
     <div class="tab" onclick="switchTab('form', this)">COLLECTE</div>
 </div>
 
 <div class="container">
     <div id="dash" class="section active">
         <div class="kpi-grid">
-            <div class="kpi-card"><span class="kpi-val" id="kpi-ben">---</span><span class="kpi-lab">Bénéficiaires</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-exe">78%</span><span class="kpi-lab">Exécution Budget</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-genre">62%</span><span class="kpi-lab">Femmes Leaders</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-form">12</span><span class="kpi-lab">Formations</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span class="kpi-lab">Bénéficiaires</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span class="kpi-lab">Intégration Genre</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0</span><span class="kpi-lab">Dépenses (CFA)</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span class="kpi-lab">Activités</span></div>
         </div>
 
         <div class="card">
-            <h2>Évolution des Impacts</h2>
-            <div class="chart-container">
-                <canvas id="lineChart"></canvas>
-            </div>
+            <h2>Évolution des Soumissions</h2>
+            <div class="chart-box"><canvas id="lineChart"></canvas></div>
         </div>
 
         <div class="card">
-            <h2>Répartition Sectorielle</h2>
-            <div class="chart-container">
-                <canvas id="pieChart"></canvas>
-            </div>
+            <h2>Répartition par Secteur</h2>
+            <div class="chart-box"><canvas id="pieChart"></canvas></div>
         </div>
     </div>
 
     <div id="data" class="section">
         <div class="card">
-            <h2>Dernières Activités</h2>
+            <h2>Flux de données Kobo</h2>
             <div style="overflow-x: auto;">
-                <table style="width:100%; border-collapse: collapse; font-size: 0.8rem;">
-                    <thead style="background: #f8f9fc; color: var(--steel);">
-                        <tr><th style="padding:10px; text-align:left;">DATE</th><th style="padding:10px; text-align:left;">ZONE</th><th style="padding:10px; text-align:left;">STATUT</th></tr>
-                    </thead>
+                <table style="width:100%; font-size: 0.75rem; border-collapse: collapse;">
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
@@ -150,24 +98,88 @@
     </div>
 
     <div id="form" class="section">
-        <div class="card" style="text-align: center; padding: 40px 20px;">
-            <div style="font-size: 3rem; margin-bottom: 20px;">📋</div>
-            <h2>Collecte de Données</h2>
-            <p style="font-size: 0.9rem; color: var(--steel); margin-bottom: 30px;">Envoyez vos rapports directement vers KoboToolbox.</p>
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 3rem;">📡</div>
+            <h2>Mode Collecte</h2>
+            <p style="font-size: 0.8rem; color: var(--steel);">Saisie en temps réel via KoboToolbox.</p><br>
             <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-gold">OUVRIR LE FORMULAIRE</a>
         </div>
     </div>
 </div>
 
-<footer>© 2026 CHYC CONSULTING - Saint-Louis, Sénégal</footer>
+<footer>© 2026 CHYC CONSULTING - SaaS MEAL Automatisé</footer>
 
 <script>
-    const rawData = [
-        { date: 'Jan', wash: 45, agri: 30, prot: 20 },
-        { date: 'Fév', wash: 52, agri: 45, prot: 25 },
-        { date: 'Mar', wash: 80, agri: 60, prot: 30 },
-        { date: 'Avr', wash: 110, agri: 85, prot: 45 }
-    ];
+    const TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
+    const ASSET_ID = 'AnJWsYbZiGvWEz3ZjmwcqY';
+    const URL = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+
+    let lineChart, pieChart;
+
+    async function syncSaaS() {
+        document.getElementById('sync-status').innerText = '⏳ Synchronisation...';
+        try {
+            const res = await fetch(URL, { headers: { 'Authorization': `Token ${TOKEN}` } });
+            const data = await res.json();
+            updateUI(data.results);
+            document.getElementById('sync-status').innerText = '✅ À jour';
+        } catch (e) {
+            document.getElementById('sync-status').innerText = '❌ Erreur de flux';
+        }
+    }
+
+    function updateUI(results) {
+        let totalH = 0, totalF = 0, budget = 0, secteurs = {};
+        const body = document.getElementById('table-body');
+        body.innerHTML = '';
+
+        results.forEach((entry, i) => {
+            totalH += parseInt(entry.nb_beneficiaires_h || 0);
+            totalF += parseInt(entry.nb_beneficiaires_f || 0);
+            budget += parseInt(entry.montant_depense || 0);
+            
+            let s = entry.secteur_projet || 'Autre';
+            secteurs[s] = (secteurs[s] || 0) + 1;
+
+            if(i < 8) {
+                body.innerHTML += `<tr style="border-bottom:1px solid #eee">
+                    <td style="padding:10px">${new Date(entry._submission_time).toLocaleDateString()}</td>
+                    <td><b>${entry.zone_intervention || 'N/A'}</b></td>
+                    <td style="text-align:right">${entry.nom_agent || ''}</td>
+                </tr>`;
+            }
+        });
+
+        document.getElementById('kpi-ben').innerText = totalH + totalF;
+        document.getElementById('kpi-budget').innerText = budget.toLocaleString();
+        document.getElementById('kpi-form').innerText = results.length;
+        document.getElementById('kpi-genre').innerText = totalH+totalF > 0 ? Math.round((totalF/(totalH+totalF))*100)+'%' : '0%';
+
+        renderCharts(results, secteurs);
+    }
+
+    function renderCharts(results, secteurs) {
+        if(lineChart) lineChart.destroy();
+        if(pieChart) pieChart.destroy();
+
+        lineChart = new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: results.slice(0,10).reverse().map(r => new Date(r._submission_time).toLocaleDateString()),
+                datasets: [{ label: 'Activité', data: results.slice(0,10).map(() => 1), borderColor: '#B8972A', tension: 0.4 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        pieChart = new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(secteurs),
+                datasets: [{ data: Object.values(secteurs), backgroundColor: ['#1A2A5E','#B8972A','#6E8CB5','#A8C0D8'] }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
 
     function switchTab(id, el) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -176,53 +188,7 @@
         el.classList.add('active');
     }
 
-    function initCharts() {
-        // Line Chart - Évolution
-        new Chart(document.getElementById('lineChart'), {
-            type: 'line',
-            data: {
-                labels: rawData.map(d => d.date),
-                datasets: [{
-                    label: 'Bénéficiaires Totaux',
-                    data: rawData.map(d => d.wash + d.agri + d.prot),
-                    borderColor: '#B8972A',
-                    backgroundColor: 'rgba(184, 151, 42, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-
-        // Pie Chart - Secteurs
-        new Chart(document.getElementById('pieChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['WASH', 'AGRI', 'PROT'],
-                datasets: [{
-                    data: [45, 35, 20],
-                    backgroundColor: ['#1A2A5E', '#B8972A', '#6E8CB5']
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    function init() {
-        document.getElementById('kpi-ben').innerText = '482';
-        const body = document.getElementById('table-body');
-        const demoData = [
-            {d:'22/04', z:'Saint-Louis', s:'Validé'},
-            {d:'21/04', z:'Podor', s:'Attente'}
-        ];
-        demoData.forEach(item => {
-            body.innerHTML += `<tr><td style="padding:10px;">${item.d}</td><td style="padding:10px;"><b>${item.z}</b></td><td style="padding:10px; color:${item.s==='Validé'?'green':'orange'}">${item.s}</td></tr>`;
-        });
-        initCharts();
-    }
-
-    window.onload = init;
+    window.onload = syncSaaS;
 </script>
 </body>
-    </html>
-    
+</html>
