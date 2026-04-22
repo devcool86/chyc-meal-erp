@@ -2,44 +2,29 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>CHYC-MEAL v8.1 | Système Expert</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>CHYC-MEAL v8.2 | Connexion Forcée</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
-    
     <style>
         :root { --navy: #0F1B42; --gold: #B8972A; --bg: #F4F7FE; }
         body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
-        header { background: var(--navy); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        header { background: var(--navy); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; }
-        #sync-status { font-size: 0.7rem; cursor: pointer; padding: 6px 15px; border-radius: 20px; background: rgba(255,255,255,0.15); font-weight: 700; transition: 0.3s; }
-        #sync-status.error { background: #EF4444; color: white; }
-        #sync-status.success { background: #10B981; color: white; }
-
+        #sync-status { font-size: 0.7rem; cursor: pointer; padding: 6px 15px; border-radius: 20px; background: #64748B; color: white; font-weight: 700; }
+        .status-ok { background: #10B981 !important; }
+        .status-err { background: #EF4444 !important; }
         .filter-bar { background: #1A2A5E; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; width: 100%; font-family: 'Sora'; cursor: pointer; }
-        
+        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; width: 100%; font-family: 'Sora'; }
         .container { padding: 15px; max-width: 900px; margin: 0 auto; }
-        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; text-decoration: none; color: white; transition: 0.2s; }
-        .btn-pdf { background: #334155; }
-        .btn-pdf:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-kobo { background: var(--gold); color: var(--navy); }
-        .btn:active { transform: scale(0.98); }
-
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { background: #fff; padding: 18px; border-radius: 16px; border-bottom: 4px solid #E2E8F0; }
-        .kpi-val { display: block; font-size: 1.3rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
-        .kpi-label { font-size: 0.6rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-        
-        .card { background: #fff; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .kpi-val { display: block; font-size: 1.3rem; font-weight: 800; }
+        .card { background: #fff; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
         table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
         td { padding: 12px 10px; border-bottom: 1px solid #F1F5F9; }
-        .badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: #F1F5F9; color: var(--navy); font-weight: 700; text-transform: uppercase; }
-
-        @media print { .no-print { display: none !important; } .container { width: 100%; max-width: 100%; } }
+        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 10px; display: block; text-align: center; text-decoration: none; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -47,176 +32,137 @@
 <header>
     <div style="display:flex; align-items:center; gap:10px;">
         <div class="logo-box">CHYC</div>
-        <div style="font-weight:800; font-size:0.85rem; letter-spacing: -0.5px;">SYSTEM ANALYTICS</div>
+        <div style="font-weight:800; font-size:0.85rem;">MEAL v8.2</div>
     </div>
-    <div id="sync-status" onclick="fetchData()">🔄 ACTUALISER</div>
+    <div id="sync-status" onclick="fetchData()">🔄 CHARGEMENT</div>
 </header>
 
-<div class="filter-bar no-print">
-    <select id="f-proj" onchange="render()"><option value="ALL">🏢 TOUS LES PROJETS</option></select>
-    <select id="f-sect" onchange="render()">
-        <option value="ALL">📂 TOUS LES SECTEURS</option>
-        <option value="sante">Santé</option>
-        <option value="agriculture">Agriculture</option>
-        <option value="microfinance">Microfinance / AGR</option>
-        <option value="education">Éducation / Formation</option>
-        <option value="wash">WASH</option>
-        <option value="protection">Protection / Genre</option>
-        <option value="logistique">Logistique / Distribution</option>
-    </select>
+<div class="filter-bar">
+    <select id="f-proj" onchange="render()"><option value="ALL">PROJETS</option></select>
+    <select id="f-sect" onchange="render()"><option value="ALL">SECTEURS</option></select>
 </div>
 
 <div class="container" id="report-area">
-    <div class="action-row no-print">
-        <button id="pdf-btn" onclick="exportPDF()" class="btn btn-pdf" disabled>⌛ CHARGEMENT...</button>
-        <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-kobo">➕ NOUVELLE SAISIE</a>
-    </div>
-
     <div class="kpi-grid">
-        <div class="kpi-card"><span class="kpi-val" id="v-ben">0</span><span class="kpi-label">Bénéficiaires</span></div>
-        <div class="kpi-card"><span class="kpi-val" id="v-gen" style="color: #DB2777;">0%</span><span class="kpi-label">Ratio Femmes</span></div>
-        <div class="kpi-card"><span class="kpi-val" id="v-cash" style="color: #059669;">0 F</span><span class="kpi-label">Dépenses</span></div>
-        <div class="kpi-card"><span class="kpi-val" id="v-act">0</span><span class="kpi-label">Missions</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-ben">0</span><span style="font-size:0.6rem; color:#64748B;">BÉNÉFICIAIRES</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-gen" style="color:#DB2777;">0%</span><span style="font-size:0.6rem; color:#64748B;">FEMMES</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-cash" style="color:#059669;">0 F</span><span style="font-size:0.6rem; color:#64748B;">DÉPENSES</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-act">0</span><span style="font-size:0.6rem; color:#64748B;">MISSIONS</span></div>
     </div>
 
-    <div class="card">
-        <div style="height: 200px;"><canvas id="myChart"></canvas></div>
-    </div>
+    <div class="card"><div style="height:180px;"><canvas id="myChart"></canvas></div></div>
+    <div class="card"><table><tbody id="v-table"></tbody></table></div>
     
-    <div class="card" style="padding:0;">
-        <div style="padding:15px; font-weight:800; font-size:0.75rem; border-bottom:1px solid #eee;">DERNIÈRES ACTIVITÉS</div>
-        <table id="data-table"><tbody></tbody></table>
-    </div>
+    <button onclick="exportPDF()" class="btn" style="background:#334155; color:white;">📄 GÉNÉRER LE RAPPORT PDF</button>
 </div>
 
 <script>
-// --- CONFIGURATION ---
 const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK';
-const PROXY = "https://api.allorigins.win/get?url=";
-const KOBO_URL = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
-
 let rawData = [];
 let chart = null;
 
-// --- FONCTION DE CONNEXION SÉCURISÉE ---
 async function fetchData() {
     const st = document.getElementById('sync-status');
     st.innerText = '⌛ SYNC...';
     st.className = '';
 
+    const url = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+    
+    // Tentative 1 : AllOrigins
     try {
-        const response = await fetch(PROXY + encodeURIComponent(KOBO_URL));
-        if (!response.ok) throw new Error('Erreur Réseau');
-        
-        const json = await response.json();
-        const data = JSON.parse(json.contents);
-        
-        if (data.results) {
-            rawData = data.results;
-            st.innerText = '✅ CONNECTÉ';
-            st.classList.add('success');
-            initProjectFilter();
-            render();
-        } else {
-            throw new Error('Données vides');
-        }
+        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}&t=${Date.now()}`);
+        const d = await r.json();
+        const content = JSON.parse(d.contents);
+        processData(content.results, st);
     } catch (e) {
-        console.error(e);
-        st.innerText = '❌ ERREUR';
-        st.classList.add('error');
+        // Tentative 2 : Failover si la 1 échoue
+        console.log("Switching to secondary proxy...");
+        st.innerText = '⚠️ RETRY...';
+        try {
+            const r2 = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+            const d2 = await r2.json();
+            processData(d2.results, st);
+        } catch (e2) {
+            st.innerText = '❌ ERREUR';
+            st.className = 'status-err';
+        }
     }
 }
 
-function initProjectFilter() {
-    const pS = document.getElementById('f-proj');
-    const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean);
-    pS.innerHTML = '<option value="ALL">🏢 TOUS LES PROJETS</option>';
-    projs.forEach(p => pS.innerHTML += `<option value="${p}">${p.toUpperCase()}</option>`);
+function processData(results, st) {
+    if (results) {
+        rawData = results;
+        st.innerText = '✅ CONNECTÉ';
+        st.className = 'status-ok';
+        initFilters();
+        render();
+    }
 }
 
-// --- MOTEUR DE CALCUL HARMONISÉ ---
+function initFilters() {
+    const pS = document.getElementById('f-proj');
+    const sS = document.getElementById('f-sect');
+    const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean);
+    const sects = [...new Set(rawData.map(r => r.secteur_projet))].filter(Boolean);
+    
+    pS.innerHTML = '<option value="ALL">🏢 TOUS PROJETS</option>';
+    projs.forEach(p => pS.innerHTML += `<option value="${p}">${p.toUpperCase()}</option>`);
+    
+    sS.innerHTML = '<option value="ALL">📂 TOUS SECTEURS</option>';
+    sects.forEach(s => sS.innerHTML += `<option value="${s}">${s.toUpperCase()}</option>`);
+}
+
 function render() {
     const pF = document.getElementById('f-proj').value;
     const sF = document.getElementById('f-sect').value;
-
     const data = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF));
 
-    let totalBen = 0, totalFemmes = 0, totalCash = 0, statsSecteurs = {};
-    const tbody = document.querySelector('#data-table tbody');
-    tbody.innerHTML = '';
+    let ben = 0, f = 0, cash = 0, graph = {};
+    const tb = document.getElementById('v-table');
+    tb.innerHTML = '';
 
-    data.forEach((item, index) => {
-        // Nettoyage des données (Conversion texte -> nombre)
-        const h = parseInt(item.nb_hommes) || 0;
-        const f = parseInt(item.nb_femmes) || 0;
-        const c = parseFloat(item.montant_depense) || 0;
+    data.forEach((r, i) => {
+        // Extraction avec support pour les préfixes de groupe (Kobo grp_impact/...)
+        const getVal = (key) => r[key] || r[`grp_impact/${key}`] || 0;
+        
+        const valH = parseInt(getVal('nb_hommes'));
+        const valF = parseInt(getVal('nb_femmes'));
+        const valM = parseFloat(getVal('montant_depense'));
 
-        totalBen += (h + f);
-        totalFemmes += f;
-        totalCash += c;
+        ben += (valH + valF);
+        f += valF;
+        cash += valM;
 
-        let sect = (item.secteur_projet || 'Autre').toUpperCase();
-        statsSecteurs[sect] = (statsSecteurs[sect] || 0) + 1;
+        let s = (r.secteur_projet || 'Autre').toUpperCase();
+        graph[s] = (graph[s] || 0) + 1;
 
-        if(index < 6) {
-            tbody.innerHTML += `<tr>
-                <td>${new Date(item._submission_time).toLocaleDateString()}<br><span class="badge">${sect}</span></td>
-                <td><b>${item.zone_intervention || '-'}</b></td>
-                <td style="text-align:right; font-weight:800;">${c.toLocaleString()} F</td>
-            </tr>`;
+        if(i < 5) {
+            tb.innerHTML += `<tr><td>${new Date(r._submission_time).toLocaleDateString()}<br><b>${s}</b></td><td style="text-align:right"><b>${valM.toLocaleString()} F</b></td></tr>`;
         }
     });
 
-    // Affichage des KPI
-    document.getElementById('v-ben').innerText = totalBen.toLocaleString();
-    document.getElementById('v-gen').innerText = totalBen > 0 ? Math.round((totalFemmes/totalBen)*100)+'%' : '0%';
-    document.getElementById('v-cash').innerText = totalCash.toLocaleString() + ' F';
+    document.getElementById('v-ben').innerText = ben.toLocaleString();
+    document.getElementById('v-gen').innerText = ben > 0 ? Math.round((f/ben)*100)+'%' : '0%';
+    document.getElementById('v-cash').innerText = cash.toLocaleString() + ' F';
     document.getElementById('v-act').innerText = data.length;
-    
-    updateChart(statsSecteurs);
+    updateChart(graph);
 }
 
 function updateChart(obj) {
-    const ctx = document.getElementById('myChart');
     if(chart) chart.destroy();
-    
-    chart = new Chart(ctx, {
+    chart = new Chart(document.getElementById('myChart'), {
         type: 'doughnut',
-        data: {
-            labels: Object.keys(obj),
-            datasets: [{ 
-                data: Object.values(obj), 
-                backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981', '#DB2777'],
-                hoverOffset: 4,
-                borderWidth: 2
-            }]
-        },
-        options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { font: { family: 'Sora', size: 10 } } } }
-        }
+        data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981'] }] },
+        options: { responsive: true, maintainAspectRatio: false }
     });
 }
 
 function exportPDF() {
     const element = document.getElementById('report-area');
-    html2pdf().from(element).set({
-        margin: 10,
-        filename: 'CHYC_Rapport_Impact.pdf',
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).save();
+    html2pdf().from(element).save('Rapport_CHYC.pdf');
 }
 
-function checkPDF() {
-    if (typeof html2pdf !== 'undefined') {
-        const b = document.getElementById('pdf-btn');
-        b.disabled = false; b.innerText = '📄 RAPPORT PDF';
-    } else { setTimeout(checkPDF, 1000); }
-}
-
-window.onload = () => { fetchData(); checkPDF(); };
+window.onload = fetchData;
 </script>
 </body>
 </html>
