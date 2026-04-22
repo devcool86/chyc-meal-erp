@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>CHYC-MEAL v7.3 | Dashboard Expert</title>
+    <title>CHYC-MEAL v7.4 | Pilotage Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
@@ -13,20 +13,33 @@
         header { background: var(--navy); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; }
         #sync-status { font-size: 0.65rem; cursor: pointer; padding: 5px 12px; border-radius: 20px; background: rgba(255,255,255,0.1); font-weight: 700; }
+        
+        /* Barres de filtres */
         .filter-bar { background: #1A2A5E; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; font-family: 'Sora'; }
+        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; font-family: 'Sora'; width: 100%; }
+        
         .container { padding: 15px; max-width: 900px; margin: 0 auto; }
         .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; text-decoration: none; }
         .btn-pdf { background: #334155; color: white; }
         .btn-kobo { background: var(--gold); color: var(--navy); }
+
+        /* KPI & Cards */
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { background: #fff; padding: 18px; border-radius: 16px; border-bottom: 4px solid #E2E8F0; }
         .kpi-val { display: block; font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
         .kpi-label { font-size: 0.6rem; color: #64748B; text-transform: uppercase; }
-        .card { background: #fff; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .card { background: #fff; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        
         table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
         td { padding: 10px; border-bottom: 1px solid #F8FAFC; }
+
+        /* REGLE CRUCIALE POUR LE PDF */
+        @media print {
+            .no-print, .filter-bar, .action-row, header { display: none !important; }
+            .container { padding: 0; }
+            .card { box-shadow: none; border: 1px solid #EEE; }
+        }
     </style>
 </head>
 <body>
@@ -34,18 +47,27 @@
 <header>
     <div style="display:flex; align-items:center; gap:10px;">
         <div class="logo-box">CHYC</div>
-        <div style="font-weight:800; font-size:0.85rem;">MEAL MONITOR 7.3</div>
+        <div style="font-weight:800; font-size:0.85rem;">MEAL MONITOR 7.4</div>
     </div>
-    <div id="sync-status" onclick="fetchData()">🔄 CLIQUEZ POUR SYNC</div>
+    <div id="sync-status" onclick="fetchData()">🔄 ACTUALISER</div>
 </header>
 
-<div class="filter-bar">
+<div class="filter-bar no-print">
     <select id="f-proj" onchange="render()"><option value="ALL">🏢 PROJETS (TOUS)</option></select>
-    <select id="f-sect" onchange="render()"><option value="ALL">📂 SECTEURS (TOUS)</option></select>
+    <select id="f-sect" onchange="render()">
+        <option value="ALL">📂 SECTEURS (TOUS)</option>
+        <option value="sante">Santé</option>
+        <option value="agriculture">Agriculture</option>
+        <option value="microfinance">Microfinance / AGR</option>
+        <option value="education">Éducation</option>
+        <option value="wash">WASH</option>
+        <option value="protection">Protection / Genre</option>
+        <option value="logistique">Logistique</option>
+    </select>
 </div>
 
 <div class="container" id="content">
-    <div class="action-row">
+    <div class="action-row no-print">
         <button onclick="exportPDF()" class="btn btn-pdf">📄 GÉNÉRER PDF</button>
         <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-kobo">➕ SAISIE KOBO</a>
     </div>
@@ -57,8 +79,15 @@
         <div class="kpi-card"><span class="kpi-val" id="v-act">0</span><span class="kpi-label">Activités</span></div>
     </div>
 
-    <div class="card"><canvas id="myChart" style="max-height:200px;"></canvas></div>
-    <div class="card"><table><tbody id="v-table"></tbody></table></div>
+    <div class="card">
+        <div style="font-size:0.7rem; font-weight:800; margin-bottom:10px; color:var(--gold)">RÉPARTITION PAR SECTEUR</div>
+        <canvas id="myChart" style="max-height:180px;"></canvas>
+    </div>
+    
+    <div class="card">
+        <div style="font-size:0.7rem; font-weight:800; margin-bottom:10px;">HISTORIQUE DES MISSIONS</div>
+        <table><tbody id="v-table"></tbody></table>
+    </div>
 </div>
 
 <script>
@@ -68,91 +97,83 @@ let chart = null;
 
 async function fetchData() {
     const st = document.getElementById('sync-status');
-    st.innerText = '⌛ CHARGEMENT...';
-    
-    // Essai avec deux proxies différents pour garantir la connexion
-    const proxies = [
-        "https://api.allorigins.win/get?url=",
-        "https://corsproxy.io/?"
-    ];
-    
+    st.innerText = '⌛...';
+    const proxy = "https://api.allorigins.win/get?url=";
     const target = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
     
-    for (let p of proxies) {
-        try {
-            const r = await fetch(p + encodeURIComponent(target));
-            const d = await r.json();
-            const content = d.contents ? JSON.parse(d.contents) : d;
-            if (content.results) {
-                rawData = content.results;
-                st.innerText = '✅ SYNC OK';
-                st.style.background = '#059669';
-                initFilters();
-                render();
-                return;
-            }
-        } catch (e) { console.log("Proxy failed, trying next..."); }
-    }
-    st.innerText = '❌ ERREUR (Réessayer)';
+    try {
+        const r = await fetch(proxy + encodeURIComponent(target));
+        const d = await r.json();
+        const content = JSON.parse(d.contents);
+        if (content.results) {
+            rawData = content.results;
+            st.innerText = '✅ SYNC OK';
+            initProjectFilter();
+            render();
+        }
+    } catch (e) { st.innerText = '❌ ERREUR'; }
 }
 
-function initFilters() {
+function initProjectFilter() {
     const pS = document.getElementById('f-proj');
-    const sS = document.getElementById('f-sect');
     const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean);
-    const sects = [...new Set(rawData.map(r => r.secteur_projet))].filter(Boolean);
-    
+    pS.innerHTML = '<option value="ALL">🏢 PROJETS (TOUS)</option>';
     projs.forEach(p => pS.innerHTML += `<option value="${p}">${p.toUpperCase()}</option>`);
-    sects.forEach(s => sS.innerHTML += `<option value="${s}">${s.toUpperCase()}</option>`);
 }
 
 function render() {
     const pF = document.getElementById('f-proj').value;
     const sF = document.getElementById('f-sect').value;
-    
-    const data = rawData.filter(r => 
-        (pF === 'ALL' || r.code_projet === pF) && 
-        (sF === 'ALL' || r.secteur_projet === sF)
-    );
+    const data = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF));
 
     let ben = 0, f = 0, cash = 0, graph = {};
     const tb = document.getElementById('v-table');
     tb.innerHTML = '';
 
     data.forEach((r, i) => {
-        const bh = parseInt(r.nb_beneficiaires_h || 0);
-        const bf = parseInt(r.nb_beneficiaires_f || 0);
-        ben += (bh + bf); f += bf;
+        ben += (parseInt(r.nb_beneficiaires_h || 0) + parseInt(r.nb_beneficiaires_f || 0));
+        f += parseInt(r.nb_beneficiaires_f || 0);
         cash += parseFloat(r.montant_depense || 0);
         graph[r.secteur_projet] = (graph[r.secteur_projet] || 0) + 1;
-        
-        if(i < 5) tb.innerHTML += `<tr><td>${new Date(r._submission_time).toLocaleDateString()}</td><td><b>${r.zone_intervention || '-'}</b></td><td>${cash.toLocaleString()} F</td></tr>`;
+        if(i < 5) tb.innerHTML += `<tr><td>${new Date(r._submission_time).toLocaleDateString()}</td><td><b>${r.zone_intervention || '-'}</b></td><td>${parseFloat(r.montant_depense || 0).toLocaleString()} F</td></tr>`;
     });
 
     document.getElementById('v-ben').innerText = ben.toLocaleString();
     document.getElementById('v-gen').innerText = ben > 0 ? Math.round((f/ben)*100)+'%' : '0%';
     document.getElementById('v-cash').innerText = cash.toLocaleString() + ' F';
     document.getElementById('v-act').innerText = data.length;
-
     updateChart(graph);
 }
 
 function updateChart(obj) {
-    const ctx = document.getElementById('myChart');
     if(chart) chart.destroy();
-    chart = new Chart(ctx, {
-        type: 'bar',
+    chart = new Chart(document.getElementById('myChart'), {
+        type: 'doughnut',
         data: {
             labels: Object.keys(obj).map(s => s.toUpperCase()),
-            datasets: [{ label: 'Activités', data: Object.values(obj), backgroundColor: '#B8972A' }]
+            datasets: [{ data: Object.values(obj), backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981'] }]
         },
-        options: { plugins: { legend: { display: false } } }
+        options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
     });
 }
 
 function exportPDF() {
-    const e = document.getElementById('content');
-    html2pdf().from(e).save('Rapport_CHYC.pdf');
+    const opt = {
+        margin: 10,
+        filename: 'Rapport_CHYC_MEAL.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    // Cache temporaire des éléments non désirés avant génération
+    const elementsToHide = document.querySelectorAll('.no-print');
+    elementsToHide.forEach(el => el.style.display = 'none');
+
+    html2pdf().set(opt).from(document.getElementById('content')).save().then(() => {
+        // Réaffichage après génération
+        elementsToHide.forEach(el => el.style.display = '');
+    });
 }
 
 window.onload = fetchData;
