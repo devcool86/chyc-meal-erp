@@ -86,13 +86,13 @@
         .badge-prot { background: #FFF3E0; color: #E65100; }
 
         .btn {
-            background: var(--navy); color: #fff; border: none; padding: 12px 20px;
-            border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.2s;
+            background: var(--navy); color: #fff; border: none; padding: 15px 20px;
+            border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%;
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.2s; text-decoration: none; font-size: 1rem;
         }
         .btn:active { transform: scale(0.98); background: var(--navy-d); }
-        .btn-gold { background: var(--gold); color: var(--navy-d); }
+        .btn-gold { background: var(--gold); color: var(--navy-d); box-shadow: 0 4px 15px rgba(184,151,42,0.3); }
 
         footer { text-align: center; padding: 30px; font-size: 0.75rem; color: var(--steel); }
     </style>
@@ -153,18 +153,22 @@
                             <th>STATUT</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body">
-                        </tbody>
+                    <tbody id="table-body"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <div id="form" class="section">
-        <div class="card">
+        <div class="card" style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">📋</div>
             <h2>Nouvelle Entrée MEAL</h2>
-            <p style="font-size: 0.85rem; color: var(--steel);">Formulaire synchronisé avec KoboToolbox / MS Access.</p>
-            <button class="btn btn-gold" onclick="alert('Lien vers KoboToolbox configuré.')">OUVRIR LE FORMULAIRE</button>
+            <p style="font-size: 0.9rem; color: var(--steel); margin-bottom: 30px;">
+                Cliquez sur le bouton ci-dessous pour ouvrir le formulaire de collecte synchronisé avec <b>KoboToolbox</b>.
+            </p>
+            <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-gold">
+                OUVRIR LE FORMULAIRE
+            </a>
         </div>
     </div>
 </div>
@@ -175,7 +179,6 @@
 </footer>
 
 <script>
-    // DONNÉES SIMULÉES
     const rawData = [
         { date: '22/04', zone: 'Saint-Louis', secteur: 'WASH', h: 45, f: 62, statut: 'Validé' },
         { date: '21/04', zone: 'Dakar', secteur: 'AGRI', h: 30, f: 12, statut: 'En attente' },
@@ -191,13 +194,11 @@
     }
 
     function init() {
-        // Calcul KPIs
         const totalBen = rawData.reduce((acc, curr) => acc + curr.h + curr.f, 0);
         document.getElementById('kpi-ben').innerText = totalBen;
         document.getElementById('kpi-budget').innerText = '1.4M';
         document.getElementById('kpi-zone').innerText = '04';
 
-        // Table
         const body = document.getElementById('table-body');
         rawData.forEach(item => {
             const row = `<tr>
@@ -215,5 +216,4 @@
 </script>
 
 </body>
-                                            </html>
-  
+</html>
