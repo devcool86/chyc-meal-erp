@@ -1,93 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>CHYC-MEAL ERP v5.2</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --navy: #1A2A5E; --gold: #B8972A; --bg: #EEF2FA; --card: #fff; --r: 14px; }
+        body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); overflow-x: hidden; }
+        header { background: #0F1B42; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        #sync-status { font-size: 0.65rem; font-weight: 800; border-radius: 20px; padding: 5px 12px; background: rgba(255,255,255,0.1); color: #FFB300; }
+        .nav-tabs { display: flex; background: var(--navy); padding: 5px; position: sticky; top: 60px; z-index: 90; }
+        .tab { flex: 1; text-align: center; padding: 12px; color: #A8C0D8; font-size: 0.75rem; font-weight: 600; cursor: pointer; border-radius: 8px; }
+        .tab.active { background: #243470; color: #fff; box-shadow: inset 0 0 0 1px var(--gold); }
+        .container { padding: 15px; max-width: 800px; margin: 0 auto; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .kpi-card { background: var(--card); padding: 15px; border-radius: var(--r); border-left: 4px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .kpi-val { display: block; font-size: 1.1rem; font-weight: 800; }
+        .card { background: var(--card); border-radius: var(--r); padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .btn { background: var(--navy); color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; width: 100%; display: flex; justify-content: center; text-decoration: none; align-items: center; margin-top: 10px; }
+        .section { display: none; min-height: 400px; }
+        .section.active { display: block; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+        td { padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .chart-container { position: relative; height: 250px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:center; gap:8px;">
+        <div style="background:var(--gold); color:#0F1B42; padding:6px 10px; border-radius:6px; font-weight:800;">CH</div>
+        <div style="font-weight:800; font-size:0.85rem;">CHYC-MEAL</div>
+    </div>
+    <div id="sync-status">SYNCHRO...</div>
+</header>
+
+<div class="nav-tabs">
+    <div class="tab active" onclick="switchTab('dash', this)">DASHBOARD</div>
+    <div class="tab" onclick="switchTab('data', this)">HISTORIQUE</div>
+    <div class="tab" onclick="switchTab('form', this)">COLLECTE</div>
+</div>
+
+<div class="container">
+    <div id="dash" class="section active">
+        <div class="kpi-grid">
+            <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span style="font-size:0.6rem; color:#6E8CB5;">Bénéficiaires</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span style="font-size:0.6rem; color:#6E8CB5;">Ratio Femmes</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0 F</span><span style="font-size:0.6rem; color:#6E8CB5;">Budget</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span style="font-size:0.6rem; color:#6E8CB5;">Rapports</span></div>
+        </div>
+
+        <div class="card">
+            <h2 style="font-size:0.75rem; margin-bottom:15px;">RÉPARTITION SECTEURS</h2>
+            <div class="chart-container"><canvas id="pieChart"></canvas></div>
+        </div>
+        
+        <button onclick="window.location.reload()" class="btn" style="background:#f1f5f9; color:#64748b; font-size:0.7rem;">ACTUALISER LES DONNÉES</button>
+    </div>
+
+    <div id="data" class="section">
+        <div class="card">
+            <h2 style="font-size:0.8rem;">Dernières entrées Kobo</h2>
+            <table><tbody id="table-body"></tbody></table>
+        </div>
+    </div>
+
+    <div id="form" class="section" style="text-align:center;">
+        <div class="card">
+            <div style="font-size:2.5rem; margin-bottom:10px;">📲</div>
+            <h2 style="font-size:1rem;">Collecte Terrain</h2>
+            <p style="font-size:0.75rem; color:#64748b;">Cliquez ci-dessous pour ouvrir la fiche de saisie Kobo.</p>
+            <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn" style="background:var(--gold); color:#000;">NOUVEAU RAPPORT</a>
+        </div>
+    </div>
+</div>
+
 <script>
     const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK';
-    let myChart = null; // Variable pour le graphique
+    let myChart = null;
 
-    async function syncSaaS() {
+    async function syncData() {
         const status = document.getElementById('sync-status');
-        const koboUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+        const url = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
         
         try {
-            const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(koboUrl)}`);
-            const json = await response.json();
-            const rawData = JSON.parse(json.contents);
+            const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+            const json = await res.json();
+            const data = JSON.parse(json.contents);
             
-            if(rawData && rawData.results && rawData.results.length > 0) {
-                processData(rawData.results);
-                status.innerText = '✅ CONNECTÉ';
+            if(data && data.results) {
+                renderAll(data.results);
+                status.innerText = '✅ EN DIRECT';
                 status.style.color = '#4ade80';
-            } else {
-                status.innerText = '✅ CONNECTÉ (VIDE)';
             }
-        } catch (e) {
-            status.innerText = '⚠️ ERREUR DONNÉES';
-            status.style.color = '#f87171';
+        } catch (err) {
+            status.innerText = '⚠️ ERREUR RESEAU';
+            status.style.color = '#fb7185';
         }
     }
 
-    function processData(results) {
-        let ben = 0, femmes = 0, cash = 0, secteurs = {};
+    function renderAll(results) {
+        let ben = 0, fems = 0, cash = 0, sects = {};
         const tbody = document.getElementById('table-body');
         tbody.innerHTML = '';
 
         results.forEach((r, i) => {
-            // Calcul des bénéficiaires
-            const h = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || 0);
-            const f = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
-            ben += (h + f);
-            femmes += f;
+            const valH = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || 0);
+            const valF = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
+            ben += (valH + valF); fems += valF;
             cash += parseInt(r.montant_depense || 0);
             
-            // Gestion des secteurs (on prend la valeur brute de Kobo)
             let s = (r.secteur_projet || 'AUTRE').toUpperCase();
-            secteurs[s] = (secteurs[s] || 0) + 1;
+            sects[s] = (sects[sects] || 0) + 1;
 
-            // Remplissage de l'historique
-            if(i < 10) {
+            if(i < 8) {
                 tbody.innerHTML += `<tr>
                     <td>${new Date(r._submission_time).toLocaleDateString()}</td>
-                    <td><b>${r.zone_intervention || 'Zone non définie'}</b></td>
+                    <td><b>${r.zone_intervention || '-'}</b></td>
                     <td style="text-align:right; color:var(--gold)">${s}</td>
                 </tr>`;
             }
         });
 
-        // Mise à jour des KPIs
         document.getElementById('kpi-ben').innerText = ben.toLocaleString();
         document.getElementById('kpi-budget').innerText = cash.toLocaleString() + ' F';
         document.getElementById('kpi-form').innerText = results.length;
-        document.getElementById('kpi-genre').innerText = ben > 0 ? Math.round((femmes/ben)*100)+'%' : '0%';
-
-        // Lancement du graphique
-        renderPie(secteurs);
+        document.getElementById('kpi-genre').innerText = ben > 0 ? Math.round((fems/ben)*100)+'%' : '0%';
+        
+        initChart(sects);
     }
 
-    function renderPie(secteursData) {
+    function initChart(dataSects) {
         const ctx = document.getElementById('pieChart').getContext('2d');
-        
-        // On détruit l'ancien graphique s'il existe pour éviter les bugs d'affichage
-        if(myChart) { myChart.destroy(); }
-
+        if(myChart) myChart.destroy();
         myChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: Object.keys(secteursData),
-                datasets: [{
-                    data: Object.values(secteursData),
-                    backgroundColor: ['#1A2A5E', '#B8972A', '#6E8CB5', '#A8C0D8', '#E8F5EE'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
+                labels: Object.keys(dataSects),
+                datasets: [{ 
+                    data: Object.values(dataSects), 
+                    backgroundColor: ['#1A2A5E','#B8972A','#6E8CB5','#A8C0D8','#E2E8F0'],
+                    borderWidth: 0 
                 }]
             },
-            options: {
-                responsive: true,
+            options: { 
+                responsive: true, 
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { font: { family: 'Sora', size: 10 } }
-                    }
-                },
-                cutout: '70%' // Pour faire un bel anneau
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } },
+                cutout: '75%'
             }
         });
     }
@@ -99,5 +164,8 @@
         el.classList.add('active');
     }
 
-    window.onload = syncSaaS;
+    window.onload = syncData;
 </script>
+</body>
+    </html>
+    
