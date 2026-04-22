@@ -1,0 +1,14 @@
+{
+  "short_name": "CHYC-MEAL",
+  "name": "CHYC-MEAL ERP - CHYC CONSULTING",
+  "icons": [
+    {
+      "src": "chyc_logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#1A2A5E"
+}
