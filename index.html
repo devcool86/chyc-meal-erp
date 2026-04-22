@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="theme-color" content="#1A2A5E">
-    <title>CHYC-MEAL ERP - SAAS PROFESSIONNEL</title>
+    <title>CHYC-MEAL ERP v4.6</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -12,43 +12,28 @@
     
     <style>
         :root { --navy: #1A2A5E; --gold: #B8972A; --bg: #EEF2FA; --card: #fff; --r: 14px; }
-        body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); overflow-x: hidden; }
-        
-        header { background: #0F1B42; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
+        header { background: #0F1B42; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo-box { display: flex; align-items: center; gap: 10px; }
-        .logo-circle { background: var(--gold); color: #0F1B42; padding: 8px; border-radius: 8px; font-weight: 800; font-size: 1rem; }
-        #sync-status { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .nav-tabs { display: flex; background: var(--navy); padding: 5px; position: sticky; top: 62px; z-index: 90; }
-        .tab { flex: 1; text-align: center; padding: 12px; color: #A8C0D8; font-size: 0.75rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .logo-circle { background: var(--gold); color: #0F1B42; padding: 8px; border-radius: 8px; font-weight: 800; }
+        #sync-status { font-size: 0.6rem; font-weight: 800; border-radius: 20px; padding: 4px 10px; background: rgba(255,255,255,0.1); }
+        .nav-tabs { display: flex; background: var(--navy); padding: 5px; position: sticky; top: 60px; z-index: 90; }
+        .tab { flex: 1; text-align: center; padding: 12px; color: #A8C0D8; font-size: 0.75rem; font-weight: 600; cursor: pointer; border-radius: 8px; }
         .tab.active { background: #243470; color: #fff; box-shadow: inset 0 0 0 1px var(--gold); }
-
         .container { padding: 20px; max-width: 1000px; margin: 0 auto; }
-        
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { background: var(--card); padding: 18px; border-radius: var(--r); border-left: 4px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .kpi-val { display: block; font-size: 1.25rem; font-weight: 800; color: var(--navy); }
+        .kpi-val { display: block; font-size: 1.25rem; font-weight: 800; }
         .kpi-lab { font-size: 0.6rem; color: #6E8CB5; text-transform: uppercase; margin-top: 4px; display: block; }
-
         .card { background: var(--card); border-radius: var(--r); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h2 { font-size: 0.85rem; margin: 0 0 15px 0; color: var(--navy); display: flex; align-items: center; gap: 8px; }
-        h2::before { content: ''; width: 3px; height: 15px; background: var(--gold); border-radius: 2px; }
-
-        .btn { background: var(--navy); color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; width: 100%; display: inline-flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none; font-size: 0.9rem; }
-        .btn-pdf { background: #334155; font-size: 0.75rem; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-gold { background: var(--gold); color: #0F1B42; margin-top: 10px; }
-
-        .chart-box { height: 250px; position: relative; width: 100%; }
-        .section { display: none; animation: fadeIn 0.4s ease-out; }
+        .btn { background: var(--navy); color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; width: 100%; display: flex; justify-content: center; text-decoration: none; align-items: center; gap: 8px; }
+        .btn-pdf { background: #334155; font-size: 0.75rem; margin-bottom: 15px; }
+        .chart-box { height: 250px; position: relative; }
+        .section { display: none; }
         .section.active { display: block; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-        th { text-align: left; color: #6E8CB5; font-weight: 400; padding-bottom: 10px; border-bottom: 1px solid #EEF2FA; }
         td { padding: 12px 0; border-bottom: 1px solid #F8FAFC; }
-
-        footer { text-align: center; padding: 30px 20px; font-size: 0.65rem; color: #6E8CB5; line-height: 1.5; }
+        footer { text-align: center; padding: 30px; font-size: 0.65rem; color: #6E8CB5; }
     </style>
 </head>
 <body>
@@ -57,7 +42,7 @@
     <div class="logo-box">
         <div class="logo-circle">CH</div>
         <div>
-            <div style="font-weight: 800; font-size: 0.95rem;">CHYC-MEAL</div>
+            <div style="font-weight: 800; font-size: 0.9rem;">CHYC-MEAL</div>
             <div id="sync-status">Initialisation...</div>
         </div>
     </div>
@@ -81,64 +66,43 @@
         </div>
 
         <div class="card">
-            <h2>Répartition par Secteur</h2>
+            <h2 style="font-size:0.8rem;">Répartition par Secteur</h2>
             <div class="chart-box"><canvas id="pieChart"></canvas></div>
         </div>
     </div>
 
     <div id="data" class="section">
         <div class="card">
-            <h2>Dernières Activités Terrain</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Localité</th>
-                        <th style="text-align:right">Secteur</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    </tbody>
-            </table>
+            <h2 style="font-size:0.8rem;">Derniers Flux Terrain</h2>
+            <table><tbody id="table-body"></tbody></table>
         </div>
     </div>
 
-    <div id="form" class="section">
-        <div class="card" style="text-align: center; padding: 40px 20px;">
-            <div style="font-size: 3.5rem; margin-bottom: 20px;">📡</div>
-            <h2 style="justify-content: center; border: none;">Système de Collecte</h2>
-            <p style="font-size: 0.85rem; color: #6E8CB5; line-height: 1.6;">Utilisez le formulaire KoboToolbox pour synchroniser vos données en temps réel.</p>
-            <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-gold">OUVRIR LE FORMULAIRE</a>
+    <div id="form" class="section" style="text-align: center;">
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📡</div>
+            <h2>Accès KoboToolbox</h2>
+            <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn" style="background:var(--gold); color:#000;">NOUVEAU RAPPORT</a>
         </div>
     </div>
 </div>
 
-<footer>
-    <b>CHYC CONSULTING</b><br>
-    Expertise en Gestion de Projets & MEAL Digital<br>
-    Saint-Louis, Sénégal
-</footer>
+<footer>© 2026 CHYC CONSULTING — Saint-Louis, Sénégal</footer>
 
 <script>
-    // CONFIGURATION SAAS
     const TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
     const ASSET_ID = 'AnJWsYbZiGvWEz3ZjmwcqY';
     
-    // Connecteur Professionnel (AllOrigins)
-    const URL_KOBO = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
-    const PROXY_URL = `https://api.allorigins.win/get?url=${encodeURIComponent(URL_KOBO)}`;
-
-    let pieChart;
-
     async function syncSaaS() {
         const status = document.getElementById('sync-status');
-        status.innerText = '⏳ CONNEXION LIVE...';
-        status.style.color = '#B8972A';
+        // Ajout du nocache pour forcer la mise à jour
+        const koboUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json?nocache=${Date.now()}`;
         
+        // On essaie AllOrigins en premier
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(koboUrl)}`;
+
         try {
-            const response = await fetch(PROXY_URL);
-            if (!response.ok) throw new Error("Erreur Proxy");
-            
+            const response = await fetch(proxyUrl);
             const rawData = await response.json();
             const data = JSON.parse(rawData.contents);
             
@@ -148,7 +112,7 @@
                 status.style.color = '#4ade80';
             }
         } catch (e) {
-            console.error("Sync Error:", e);
+            console.error("Erreur de connexion:", e);
             status.innerText = '⚠️ MODE HORS-LIGNE';
             status.style.color = '#f87171';
         }
@@ -160,7 +124,7 @@
         tbody.innerHTML = '';
 
         results.forEach((r, i) => {
-            // MAPPING DES DONNÉES (Basé sur votre XLSForm)
+            // Mapping basé sur votre XLSForm v2.0
             const benH = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || r.nb_consultations || 0);
             const benF = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
             
@@ -171,18 +135,15 @@
             let s = r.secteur_projet || 'Autre';
             secteurs[s] = (secteurs[s] || 0) + 1;
 
-            // Remplissage de la table (Historique)
             if(i < 10) {
-                const row = `<tr>
+                tbody.innerHTML += `<tr>
                     <td>${new Date(r._submission_time).toLocaleDateString()}</td>
                     <td><b>${r.zone_intervention || 'N/A'}</b></td>
-                    <td style="text-align:right; font-weight:bold; color:var(--gold)">${s.toUpperCase()}</td>
+                    <td style="text-align:right; color:var(--gold)">${s.toUpperCase()}</td>
                 </tr>`;
-                tbody.innerHTML += row;
             }
         });
 
-        // Mise à jour des KPIs
         document.getElementById('kpi-ben').innerText = totalBen.toLocaleString();
         document.getElementById('kpi-budget').innerText = budget.toLocaleString() + ' F';
         document.getElementById('kpi-form').innerText = results.length;
@@ -194,47 +155,31 @@
     function renderPie(secteurs) {
         const ctx = document.getElementById('pieChart').getContext('2d');
         if(pieChart) pieChart.destroy();
-        
         pieChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: Object.keys(secteurs).map(s => s.toUpperCase()),
                 datasets: [{
                     data: Object.values(secteurs),
-                    backgroundColor: ['#1A2A5E', '#B8972A', '#6E8CB5', '#A8C0D8', '#E8F5EE'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
+                    backgroundColor: ['#1A2A5E', '#B8972A', '#6E8CB5', '#A8C0D8', '#E8F5EE']
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { font: { family: 'Sora', size: 10 } } }
-                },
-                cutout: '65%'
-            }
+            options: { responsive: true, maintainAspectRatio: false }
         });
     }
 
     async function genererPDF() {
         const element = document.getElementById('dash');
         const btn = document.querySelector('.btn-pdf');
-        btn.style.opacity = '0'; // Cache le bouton pendant la capture
-        
+        btn.style.display = 'none';
         const opt = {
             margin: 10,
-            filename: `Rapport_CHYC_MEAL_${new Date().toISOString().slice(0,10)}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            filename: 'Rapport_CHYC_MEAL.pdf',
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-
-        try {
-            await html2pdf().set(opt).from(element).save();
-        } finally {
-            btn.style.opacity = '1';
-        }
+        try { await html2pdf().set(opt).from(element).save(); } 
+        finally { btn.style.display = 'flex'; }
     }
 
     function switchTab(id, el) {
@@ -246,6 +191,5 @@
 
     window.onload = syncSaaS;
 </script>
-
 </body>
 </html>
