@@ -4,61 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="theme-color" content="#1A2A5E">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="CHYC-MEAL">
-    <title>CHYC-MEAL ERP - CHYC CONSULTING</title>
-
-    <link rel="manifest" href="manifest.json">
+    <title>CHYC-MEAL ERP - SAAS PROFESSIONNEL</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }</script>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --navy: #1A2A5E; --navy-d: #0F1B42; --navy-m: #243470;
-            --gold: #B8972A; --gold-l: #D4AF45;
-            --steel: #6E8CB5; --steel-l: #A8C0D8;
-            --bg: #EEF2FA; --card: #fff;
-            --r: 14px; --shadow: 0 4px 12px rgba(15,27,66,0.08);
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root { --navy: #1A2A5E; --gold: #B8972A; --bg: #EEF2FA; --card: #fff; --r: 14px; }
         body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
-        header { background: var(--navy-d); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .logo-box { display: flex; align-items: center; gap: 12px; }
-        .logo-circle { width: 40px; height: 40px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--navy-d); }
-        .nav-tabs { display: flex; background: var(--navy); padding: 5px; position: sticky; top: 70px; z-index: 90; }
-        .tab { flex: 1; text-align: center; padding: 10px; color: var(--steel-l); font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer; }
-        .tab.active { background: var(--navy-m); color: #fff; box-shadow: inset 0 0 0 1px var(--gold); }
-        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
-        .kpi-card { background: var(--card); padding: 15px; border-radius: var(--r); box-shadow: var(--shadow); border-left: 4px solid var(--gold); }
-        .kpi-val { display: block; font-size: 1.3rem; font-weight: 800; }
-        .kpi-lab { font-size: 0.6rem; color: var(--steel); text-transform: uppercase; }
-        .section { display: none; animation: fadeIn 0.3s ease; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card { background: var(--card); border-radius: var(--r); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
-        h2 { font-size: 0.9rem; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; }
-        h2::before { content: ''; width: 4px; height: 18px; background: var(--gold); border-radius: 2px; }
-        .chart-box { position: relative; height: 220px; }
-        .btn { background: var(--navy); color: #fff; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; justify-content: center; text-decoration: none; border: none; cursor: pointer; width: 100%; margin-bottom: 10px; }
-        .btn-pdf { background: #555; color: #fff; font-size: 0.75rem; margin-bottom: 15px; }
-        .btn-gold { background: var(--gold); color: var(--navy-d); }
-        footer { text-align: center; padding: 20px; font-size: 0.7rem; color: var(--steel); }
+        header { background: #0F1B42; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .nav-tabs { display: flex; background: var(--navy); padding: 5px; position: sticky; top: 60px; z-index: 90; }
+        .tab { flex: 1; text-align: center; padding: 10px; color: #A8C0D8; font-size: 0.8rem; font-weight: 600; cursor: pointer; border-radius: 8px; }
+        .tab.active { background: #243470; color: #fff; box-shadow: inset 0 0 0 1px var(--gold); }
+        .container { padding: 20px; max-width: 1000px; margin: 0 auto; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .kpi-card { background: var(--card); padding: 15px; border-radius: var(--r); border-left: 4px solid var(--gold); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .kpi-val { display: block; font-size: 1.2rem; font-weight: 800; }
+        .kpi-lab { font-size: 0.6rem; color: #6E8CB5; text-transform: uppercase; }
+        .card { background: var(--card); border-radius: var(--r); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .btn { background: var(--navy); color: #fff; padding: 12px; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; width: 100%; margin-bottom: 15px; }
+        .btn-pdf { background: #444; font-size: 0.75rem; }
+        .chart-box { height: 220px; position: relative; }
+        .section { display: none; } .section.active { display: block; }
+        footer { text-align: center; padding: 20px; font-size: 0.7rem; color: #6E8CB5; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-box">
-        <div class="logo-circle">CH</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div style="background:var(--gold); color:#0F1B42; padding:8px; border-radius:8px; font-weight:800;">CH</div>
         <div>
-            <div style="font-weight: 800; font-size: 1rem;">CHYC-MEAL</div>
-            <div style="font-size: 0.6rem; color: var(--gold-l);">SAAS MEAL v4.2</div>
+            <div style="font-weight:800; font-size:0.9rem;">CHYC-MEAL</div>
+            <div id="sync-status" style="font-size:0.55rem; color:var(--gold);">Connexion Kobo...</div>
         </div>
     </div>
-    <div id="sync-status" style="font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;">Initialisation...</div>
 </header>
 
 <div class="nav-tabs">
@@ -73,44 +52,38 @@
         
         <div class="kpi-grid">
             <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span class="kpi-lab">Bénéficiaires</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span class="kpi-lab">Intégration Genre</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0</span><span class="kpi-lab">Dépenses (CFA)</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span class="kpi-lab">Total Soumissions</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span class="kpi-lab">Ratio Femmes</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0</span><span class="kpi-lab">Budget Engagé (CFA)</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span class="kpi-lab">Fiches Terrain</span></div>
         </div>
 
         <div class="card">
-            <h2>Répartition par Secteur</h2>
+            <h2 style="font-size:0.8rem; margin:0 0 15px 0;">Impact par Secteur</h2>
             <div class="chart-box"><canvas id="pieChart"></canvas></div>
         </div>
     </div>
 
     <div id="data" class="section">
         <div class="card">
-            <h2>Données en Temps Réel</h2>
-            <div style="overflow-x: auto;">
-                <table style="width:100%; font-size: 0.75rem; border-collapse: collapse;">
-                    <tbody id="table-body"></tbody>
-                </table>
-            </div>
+            <h2 style="font-size:0.8rem; margin:0 0 15px 0;">Dernières Activités</h2>
+            <table style="width:100%; font-size: 0.7rem; border-collapse: collapse;" id="table-data"></table>
         </div>
     </div>
 
-    <div id="form" class="section">
-        <div class="card" style="text-align: center;">
-            <div style="font-size: 3rem;">📡</div>
-            <h2>Accès KoboToolbox</h2>
-            <p style="font-size: 0.8rem; color: var(--steel);">Saisie mobile sécurisée.</p><br>
-            <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-gold">OUVRIR LE FORMULAIRE</a>
+    <div id="form" class="section" style="text-align:center;">
+        <div class="card">
+            <div style="font-size:3rem;">📡</div>
+            <h2>Collecte Mobile</h2>
+            <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn" style="background:var(--gold); color:#000;">NOUVEAU RAPPORT</a>
         </div>
     </div>
 </div>
 
-<footer>© 2026 CHYC CONSULTING - Expertise MEAL Digital</footer>
+<footer>© 2026 CHYC CONSULTING — Solution SaaS MEAL</footer>
 
 <script>
     const TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
     const ASSET_ID = 'AnJWsYbZiGvWEz3ZjmwcqY';
-    // Utilisation d'un proxy pour éviter l'erreur de flux (CORS)
     const PROXY = 'https://corsproxy.io/?';
     const URL = PROXY + encodeURIComponent(`https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`);
 
@@ -118,67 +91,65 @@
 
     async function syncSaaS() {
         const status = document.getElementById('sync-status');
-        status.innerText = '⏳ Sync...';
         try {
             const res = await fetch(URL, { headers: { 'Authorization': `Token ${TOKEN}` } });
-            if(!res.ok) throw new Error();
             const data = await res.json();
-            updateUI(data.results);
-            status.innerText = '✅ Connecté';
+            processData(data.results);
+            status.innerText = '✅ SYNC TERMINÉE';
         } catch (e) {
-            status.innerText = '⚠️ Mode Hors-Ligne';
-            console.log("Erreur de connexion Kobo");
+            status.innerText = '⚠️ MODE OFFLINE';
         }
     }
 
-    function updateUI(results) {
-        if(!results) return;
-        let totalH = 0, totalF = 0, budget = 0, secteurs = {};
-        const body = document.getElementById('table-body');
-        body.innerHTML = '';
+    function processData(results) {
+        let totalBen = 0, totalF = 0, budget = 0, secteurs = {};
+        const table = document.getElementById('table-data');
+        table.innerHTML = '';
 
-        results.forEach((entry, i) => {
-            totalH += parseInt(entry.nb_beneficiaires_h || 0);
-            totalF += parseInt(entry.nb_beneficiaires_f || 0);
-            budget += parseInt(entry.montant_depense || 0);
-            let s = entry.secteur_projet || 'Autre';
+        results.forEach((r, i) => {
+            // Logique de calcul basée sur votre fichier XLS
+            const benH = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || r.nb_consultations || 0);
+            const benF = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
+            
+            totalBen += (benH + benF);
+            totalF += benF;
+            budget += parseInt(r.montant_depense || 0);
+            
+            let s = r.secteur_projet || 'Autre';
             secteurs[s] = (secteurs[s] || 0) + 1;
 
             if(i < 10) {
-                body.innerHTML += `<tr style="border-bottom:1px solid #eee">
-                    <td style="padding:10px">${new Date(entry._submission_time).toLocaleDateString()}</td>
-                    <td><b>${entry.zone_intervention || 'N/A'}</b></td>
-                </tr>`;
+                table.innerHTML += `<tr style="border-bottom:1px solid #eee"><td style="padding:8px">${new Date(r._submission_time).toLocaleDateString()}</td><td><b>${r.zone_intervention || 'N/A'}</b></td><td style="text-align:right">${s}</td></tr>`;
             }
         });
 
-        document.getElementById('kpi-ben').innerText = totalH + totalF;
+        document.getElementById('kpi-ben').innerText = totalBen.toLocaleString();
         document.getElementById('kpi-budget').innerText = budget.toLocaleString();
         document.getElementById('kpi-form').innerText = results.length;
-        document.getElementById('kpi-genre').innerText = (totalH+totalF > 0) ? Math.round((totalF/(totalH+totalF))*100)+'%' : '0%';
+        document.getElementById('kpi-genre').innerText = totalBen > 0 ? Math.round((totalF/totalBen)*100)+'%' : '0%';
 
         renderPie(secteurs);
     }
 
     function renderPie(secteurs) {
+        const ctx = document.getElementById('pieChart').getContext('2d');
         if(pieChart) pieChart.destroy();
-        pieChart = new Chart(document.getElementById('pieChart'), {
+        pieChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: Object.keys(secteurs),
-                datasets: [{ data: Object.values(secteurs), backgroundColor: ['#1A2A5E','#B8972A','#6E8CB5','#A8C0D8'] }]
+                datasets: [{ data: Object.values(secteurs), backgroundColor: ['#1A2A5E','#B8972A','#6E8CB5','#A8C0D8','#E8F5EE'] }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
     }
 
     async function genererPDF() {
-        const element = document.getElementById('dash');
         const btn = document.querySelector('.btn-pdf');
         btn.style.display = 'none';
-        const opt = { margin: 10, filename: 'Rapport_CHYC.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-        try { await html2pdf().set(opt).from(element).save(); } 
-        finally { btn.style.display = 'block'; }
+        const opt = { margin: 10, filename: 'CHYC_REPORT.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
+        await html2pdf().set(opt).from(document.getElementById('dash')).save();
+        btn.style.display = 'block';
     }
 
     function switchTab(id, el) {
