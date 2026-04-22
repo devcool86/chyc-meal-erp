@@ -3,47 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>CHYC-MEAL v7.1 | Expert Dashboard</title>
-    
+    <title>CHYC-MEAL v7.2 | Pilotage Expert</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
-    
     <style>
-        :root { --navy: #0F1B42; --gold: #B8972A; --bg: #F4F7FE; --accent: #2563EB; }
+        :root { --navy: #0F1B42; --gold: #B8972A; --bg: #F4F7FE; }
         body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
-        
-        header { background: var(--navy); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        header { background: var(--navy); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; }
-
-        .filter-bar { background: #1A2A5E; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: sticky; top: 58px; z-index: 90; }
-        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; width: 100%; font-family: 'Sora'; }
-
+        .filter-bar { background: #1A2A5E; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; width: 100%; }
         .container { padding: 15px; max-width: 900px; margin: 0 auto; }
-        
-        /* Action Buttons */
         .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.75rem; text-decoration: none; transition: 0.2s; }
+        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.75rem; text-decoration: none; }
         .btn-pdf { background: #334155; color: white; }
         .btn-kobo { background: var(--gold); color: var(--navy); }
-        .btn:active { transform: scale(0.98); }
-
-        /* KPI Cards */
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { background: #fff; padding: 18px; border-radius: 16px; border-bottom: 4px solid #E2E8F0; }
-        .kpi-card.alert { border-bottom-color: #EF4444; animation: pulse 2s infinite; }
         .kpi-val { display: block; font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; }
         .kpi-label { font-size: 0.6rem; font-weight: 600; color: #64748B; text-transform: uppercase; }
-
-        .card { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .card { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 15px; }
         .chart-container { height: 220px; width: 100%; position: relative; }
-        
         table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-        th { text-align: left; padding: 10px; color: #64748B; border-bottom: 2px solid #F1F5F9; }
         td { padding: 10px; border-bottom: 1px solid #F8FAFC; }
-        .tag { padding: 4px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; background: #F1F5F9; }
-
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
     </style>
 </head>
 <body>
@@ -51,43 +34,35 @@
 <header>
     <div style="display:flex; align-items:center; gap:10px;">
         <div class="logo-box">CHYC</div>
-        <div style="font-weight:800; font-size:0.85rem;">MEAL MONITOR v7.1</div>
+        <div style="font-weight:800; font-size:0.85rem;">MEAL MONITOR</div>
     </div>
-    <div id="sync-status" style="font-size: 0.6rem;">CONNEXION...</div>
+    <div id="sync-status" onclick="init()" style="font-size: 0.6rem; cursor: pointer; background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:10px;">🔄 TESTER SYNC</div>
 </header>
 
 <div class="filter-bar">
     <select id="filter-projet" onchange="applyFilters()"><option value="ALL">🏢 TOUS LES PROJETS</option></select>
-    <select id="filter-mois" onchange="applyFilters()">
-        <option value="ALL">📅 TOUTES LES DATES</option>
-        <option value="0">Janvier</option><option value="1">Février</option><option value="2">Mars</option><option value="3">Avril</option><option value="4">Mai</option><option value="5">Juin</option><option value="6">Juillet</option><option value="7">Août</option><option value="8">Septembre</option><option value="9">Octobre</option><option value="10">Novembre</option><option value="11">Décembre</option>
-    </select>
+    <select id="filter-mois" onchange="applyFilters()"><option value="ALL">📅 TOUTES LES DATES</option></select>
 </div>
 
 <div class="container" id="report-area">
-    <div class="action-row no-pdf">
+    <div class="action-row">
         <button onclick="exportPDF()" class="btn btn-pdf">📄 RAPPORT PDF</button>
-        <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-kobo">➕ NOUVELLE SAISIE</a>
+        <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-kobo">➕ SAISIE KOBO</a>
     </div>
 
     <div class="kpi-grid">
         <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span class="kpi-label">Bénéficiaires</span></div>
         <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span class="kpi-label">Ratio Femmes</span></div>
-        <div class="kpi-card" id="card-budget"><span class="kpi-val" id="kpi-budget">0 F</span><span class="kpi-label" id="lab-budget">Budget Décaissé</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0 F</span><span class="kpi-label">Décaissé</span></div>
         <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span class="kpi-label">Activités</span></div>
     </div>
 
     <div class="card">
-        <div style="font-size:0.8rem; font-weight:800; margin-bottom:15px;">RÉPARTITION SECTORIELLE</div>
         <div class="chart-container"><canvas id="pieChart"></canvas></div>
     </div>
 
     <div class="card">
-        <div style="font-size:0.8rem; font-weight:800; margin-bottom:15px;">DERNIÈRES MISSIONS</div>
-        <table>
-            <thead><tr><th>Date</th><th>Localité</th><th>Secteur</th></tr></thead>
-            <tbody id="table-body"></tbody>
-        </table>
+        <table style="width:100%"><tbody id="table-body"></tbody></table>
     </div>
 </div>
 
@@ -96,43 +71,49 @@
     let masterData = [];
     let chartInstance = null;
 
-    const SECTEUR_LABELS = {
-        'sante': 'Santé', 'agriculture': 'Agriculture', 'microfinance': 'Microfinance',
-        'education': 'Éducation', 'wash': 'WASH', 'protection': 'Protection', 'logistique': 'Logistique'
-    };
-
     async function init() {
-        const url = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+        const status = document.getElementById('sync-status');
+        status.innerText = '⌛ CONNEXION...';
+        
+        // Utilisation d'un proxy plus robuste
+        const proxy = "https://api.allorigins.win/get?url=";
+        const target = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+        
         try {
-            const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-            const json = await res.json();
+            const response = await fetch(proxy + encodeURIComponent(target));
+            const json = await response.json();
             const raw = JSON.parse(json.contents);
-            masterData = raw.results;
-            setupFilters();
-            applyFilters();
-            document.getElementById('sync-status').innerText = '✅ EN DIRECT';
+            
+            if (raw.results) {
+                masterData = raw.results;
+                setupFilters();
+                applyFilters();
+                status.innerText = '✅ SYNC RÉUSSIE';
+                status.style.color = '#4ade80';
+            } else {
+                throw new Error("Pas de résultats");
+            }
         } catch (e) {
-            document.getElementById('sync-status').innerText = '⚠️ ERREUR';
+            status.innerText = '❌ ÉCHEC (Cliquer pour retenter)';
+            status.style.color = '#fb7185';
+            console.error(e);
         }
     }
 
     function setupFilters() {
         const pSelect = document.getElementById('filter-projet');
         const unique = [...new Set(masterData.map(r => r.code_projet))].filter(Boolean);
+        pSelect.innerHTML = '<option value="ALL">🏢 TOUS LES PROJETS</option>';
         unique.forEach(p => {
             const opt = document.createElement('option');
-            opt.value = p; opt.innerText = p.replace('_',' ').toUpperCase();
+            opt.value = p; opt.innerText = p.toUpperCase();
             pSelect.appendChild(opt);
         });
     }
 
     function applyFilters() {
         const pVal = document.getElementById('filter-projet').value;
-        const mVal = document.getElementById('filter-mois').value;
-        const filtered = masterData.filter(r => {
-            const d = new Date(r.date_mission || r._submission_time);
-            return (mVal === 'ALL' || d.getMonth().toString() === mVal) && (pVal === 'ALL' || r.code_projet === pVal);
-        });
+        const filtered = masterData.filter(r => (pVal === 'ALL' || r.code_projet === pVal));
         updateUI(filtered);
     }
 
@@ -148,9 +129,8 @@
             cash += parseFloat(r.montant_depense || 0);
             let s = r.secteur_projet || 'autre';
             sects[s] = (sects[s] || 0) + 1;
-
-            if(i < 6) {
-                tbody.innerHTML += `<tr><td>${new Date(r.date_mission || r._submission_time).toLocaleDateString('fr-FR')}</td><td><b>${r.zone_intervention || '-'}</b></td><td><span class="tag">${SECTEUR_LABELS[s] || s.toUpperCase()}</span></td></tr>`;
+            if(i < 5) {
+                tbody.innerHTML += `<tr><td>${new Date(r._submission_time).toLocaleDateString()}</td><td><b>${r.zone_intervention || '-'}</b></td><td>${s.toUpperCase()}</td></tr>`;
             }
         });
 
@@ -158,7 +138,6 @@
         document.getElementById('kpi-budget').innerText = cash.toLocaleString() + ' F';
         document.getElementById('kpi-form').innerText = data.length;
         document.getElementById('kpi-genre').innerText = ben > 0 ? Math.round((f/ben)*100)+'%' : '0%';
-        
         updateChart(sects);
     }
 
@@ -168,23 +147,16 @@
         chartInstance = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: Object.keys(sectsData).map(k => SECTEUR_LABELS[k] || k.toUpperCase()),
-                datasets: [{ data: Object.values(sectsData), backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981', '#F59E0B'], borderWidth: 2 }]
+                labels: Object.keys(sectsData),
+                datasets: [{ data: Object.values(sectsData), backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981', '#F59E0B'] }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '75%' }
+            options: { responsive: true, maintainAspectRatio: false }
         });
     }
 
     function exportPDF() {
         const element = document.getElementById('report-area');
-        const buttons = document.querySelector('.no-pdf');
-        buttons.style.display = 'none'; // Cacher les boutons pour le PDF
-        
-        const opt = { margin: 10, filename: 'Rapport_CHYC_MEAL.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-        
-        html2pdf().set(opt).from(element).save().then(() => {
-            buttons.style.display = 'grid'; // Réafficher après
-        });
+        html2pdf().from(element).save('Rapport_CHYC.pdf');
     }
 
     window.onload = init;
