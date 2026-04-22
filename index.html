@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>CHYC-MEAL v7.4 | Pilotage Pro</title>
+    <title>CHYC-MEAL v7.5 | Dashboard Final</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root { --navy: #0F1B42; --gold: #B8972A; --bg: #F4F7FE; }
         body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
@@ -14,9 +16,8 @@
         .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; }
         #sync-status { font-size: 0.65rem; cursor: pointer; padding: 5px 12px; border-radius: 20px; background: rgba(255,255,255,0.1); font-weight: 700; }
         
-        /* Barres de filtres */
         .filter-bar { background: #1A2A5E; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; font-family: 'Sora'; width: 100%; }
+        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; width: 100%; font-family: 'Sora'; }
         
         .container { padding: 15px; max-width: 900px; margin: 0 auto; }
         .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -24,21 +25,19 @@
         .btn-pdf { background: #334155; color: white; }
         .btn-kobo { background: var(--gold); color: var(--navy); }
 
-        /* KPI & Cards */
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { background: #fff; padding: 18px; border-radius: 16px; border-bottom: 4px solid #E2E8F0; }
         .kpi-val { display: block; font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
         .kpi-label { font-size: 0.6rem; color: #64748B; text-transform: uppercase; }
-        .card { background: #fff; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         
+        .card { background: #fff; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
         table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
         td { padding: 10px; border-bottom: 1px solid #F8FAFC; }
 
-        /* REGLE CRUCIALE POUR LE PDF */
         @media print {
-            .no-print, .filter-bar, .action-row, header { display: none !important; }
+            .no-print, header, .filter-bar, .action-row { display: none !important; }
             .container { padding: 0; }
-            .card { box-shadow: none; border: 1px solid #EEE; }
+            body { background: white; }
         }
     </style>
 </head>
@@ -47,7 +46,7 @@
 <header>
     <div style="display:flex; align-items:center; gap:10px;">
         <div class="logo-box">CHYC</div>
-        <div style="font-weight:800; font-size:0.85rem;">MEAL MONITOR 7.4</div>
+        <div style="font-weight:800; font-size:0.85rem;">MEAL MONITOR 7.5</div>
     </div>
     <div id="sync-status" onclick="fetchData()">🔄 ACTUALISER</div>
 </header>
@@ -58,17 +57,16 @@
         <option value="ALL">📂 SECTEURS (TOUS)</option>
         <option value="sante">Santé</option>
         <option value="agriculture">Agriculture</option>
-        <option value="microfinance">Microfinance / AGR</option>
+        <option value="microfinance">Microfinance</option>
         <option value="education">Éducation</option>
         <option value="wash">WASH</option>
-        <option value="protection">Protection / Genre</option>
-        <option value="logistique">Logistique</option>
+        <option value="protection">Protection</option>
     </select>
 </div>
 
-<div class="container" id="content">
+<div class="container" id="report-area">
     <div class="action-row no-print">
-        <button onclick="exportPDF()" class="btn btn-pdf">📄 GÉNÉRER PDF</button>
+        <button onclick="exportPDF()" class="btn btn-pdf">📄 RAPPORT PDF</button>
         <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-kobo">➕ SAISIE KOBO</a>
     </div>
 
@@ -80,12 +78,11 @@
     </div>
 
     <div class="card">
-        <div style="font-size:0.7rem; font-weight:800; margin-bottom:10px; color:var(--gold)">RÉPARTITION PAR SECTEUR</div>
+        <div style="font-size:0.7rem; font-weight:800; margin-bottom:10px;">RÉPARTITION SECTORIELLE</div>
         <canvas id="myChart" style="max-height:180px;"></canvas>
     </div>
     
     <div class="card">
-        <div style="font-size:0.7rem; font-weight:800; margin-bottom:10px;">HISTORIQUE DES MISSIONS</div>
         <table><tbody id="v-table"></tbody></table>
     </div>
 </div>
@@ -98,11 +95,8 @@ let chart = null;
 async function fetchData() {
     const st = document.getElementById('sync-status');
     st.innerText = '⌛...';
-    const proxy = "https://api.allorigins.win/get?url=";
-    const target = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
-    
     try {
-        const r = await fetch(proxy + encodeURIComponent(target));
+        const r = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(`https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`));
         const d = await r.json();
         const content = JSON.parse(d.contents);
         if (content.results) {
@@ -134,7 +128,8 @@ function render() {
         ben += (parseInt(r.nb_beneficiaires_h || 0) + parseInt(r.nb_beneficiaires_f || 0));
         f += parseInt(r.nb_beneficiaires_f || 0);
         cash += parseFloat(r.montant_depense || 0);
-        graph[r.secteur_projet] = (graph[r.secteur_projet] || 0) + 1;
+        let s = r.secteur_projet || 'Autre';
+        graph[s] = (graph[s] || 0) + 1;
         if(i < 5) tb.innerHTML += `<tr><td>${new Date(r._submission_time).toLocaleDateString()}</td><td><b>${r.zone_intervention || '-'}</b></td><td>${parseFloat(r.montant_depense || 0).toLocaleString()} F</td></tr>`;
     });
 
@@ -158,21 +153,16 @@ function updateChart(obj) {
 }
 
 function exportPDF() {
-    const opt = {
-        margin: 10,
-        filename: 'Rapport_CHYC_MEAL.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    if (typeof html2pdf === 'undefined') {
+        alert("L'outil PDF est encore en chargement. Réessayez dans 3 secondes.");
+        return;
+    }
+    const element = document.getElementById('report-area');
+    const opt = { margin: 10, filename: 'Rapport_CHYC.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
     
-    // Cache temporaire des éléments non désirés avant génération
-    const elementsToHide = document.querySelectorAll('.no-print');
-    elementsToHide.forEach(el => el.style.display = 'none');
-
-    html2pdf().set(opt).from(document.getElementById('content')).save().then(() => {
-        // Réaffichage après génération
-        elementsToHide.forEach(el => el.style.display = '');
+    document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+    html2pdf().set(opt).from(element).save().then(() => {
+        document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
     });
 }
 
