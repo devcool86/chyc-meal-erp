@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>CHYC-MEAL v7.8 | Intelligence de Données</title>
+    <title>CHYC-MEAL v7.9 | Dashboard Connecté</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
@@ -15,30 +15,22 @@
         header { background: var(--navy); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; }
         #sync-status { font-size: 0.65rem; cursor: pointer; padding: 5px 12px; border-radius: 20px; background: rgba(255,255,255,0.1); font-weight: 700; }
-        
         .filter-bar { background: #1A2A5E; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; width: 100%; font-family: 'Sora'; }
-        
         .container { padding: 15px; max-width: 900px; margin: 0 auto; }
         .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; text-decoration: none; }
         .btn-pdf { background: #334155; color: white; }
         .btn-pdf:disabled { background: #cbd5e1; cursor: not-allowed; }
         .btn-kobo { background: var(--gold); color: var(--navy); }
-
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { background: #fff; padding: 18px; border-radius: 16px; border-bottom: 4px solid #E2E8F0; }
         .kpi-val { display: block; font-size: 1.3rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
         .kpi-label { font-size: 0.65rem; color: #64748B; text-transform: uppercase; }
-        
         .card { background: #fff; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
         td { padding: 12px 10px; border-bottom: 1px solid #F1F5F9; }
-
-        @media print {
-            .no-print, header, .filter-bar, .action-row { display: none !important; }
-            .container { padding: 0; width: 100%; }
-        }
+        @media print { .no-print, header, .filter-bar, .action-row { display: none !important; } .container { padding: 0; width: 100%; } }
     </style>
 </head>
 <body>
@@ -46,7 +38,7 @@
 <header>
     <div style="display:flex; align-items:center; gap:10px;">
         <div class="logo-box">CHYC</div>
-        <div style="font-weight:800; font-size:0.85rem;">MEAL ANALYTICS</div>
+        <div style="font-weight:800; font-size:0.85rem;">MEAL ANALYTICS v7.9</div>
     </div>
     <div id="sync-status" onclick="fetchData()">🔄 SYNCHRONISER</div>
 </header>
@@ -57,10 +49,10 @@
         <option value="ALL">📂 SECTEUR (TOUS)</option>
         <option value="sante">Santé</option>
         <option value="agriculture">Agriculture</option>
-        <option value="microfinance">Microfinance</option>
-        <option value="education">Éducation</option>
+        <option value="microfinance">Microfinance / AGR</option>
+        <option value="education">Éducation / Formation</option>
         <option value="wash">WASH</option>
-        <option value="protection">Protection</option>
+        <option value="protection">Protection / Genre</option>
     </select>
 </div>
 
@@ -71,31 +63,14 @@
     </div>
 
     <div class="kpi-grid">
-        <div class="kpi-card">
-            <span class="kpi-val" id="v-ben">0</span>
-            <span class="kpi-label">Bénéficiaires</span>
-        </div>
-        <div class="kpi-card">
-            <span class="kpi-val" id="v-gen" style="color: #DB2777;">0%</span>
-            <span class="kpi-label">Ratio Femmes</span>
-        </div>
-        <div class="kpi-card">
-            <span class="kpi-val" id="v-cash" style="color: #059669;">0 F</span>
-            <span class="kpi-label">Dépenses</span>
-        </div>
-        <div class="kpi-card">
-            <span class="kpi-val" id="v-act">0</span>
-            <span class="kpi-label">Activités</span>
-        </div>
+        <div class="kpi-card"><span class="kpi-val" id="v-ben">0</span><span class="kpi-label">Bénéficiaires</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-gen" style="color: #DB2777;">0%</span><span class="kpi-label">Ratio Femmes</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-cash" style="color: #059669;">0 F</span><span class="kpi-label">Dépenses</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-act">0</span><span class="kpi-label">Activités</span></div>
     </div>
 
-    <div class="card">
-        <div style="height: 180px;"><canvas id="myChart"></canvas></div>
-    </div>
-    
-    <div class="card">
-        <table><tbody id="v-table"></tbody></table>
-    </div>
+    <div class="card"><div style="height: 180px;"><canvas id="myChart"></canvas></div></div>
+    <div class="card"><table><tbody id="v-table"></tbody></table></div>
 </div>
 
 <script>
@@ -136,17 +111,14 @@ function render() {
     tb.innerHTML = '';
 
     data.forEach((r, i) => {
-        // --- LOGIQUE DE RECHERCHE FLEXIBLE ---
-        // Cherche le montant dans plusieurs noms de colonnes possibles
-        const m = parseFloat(r.montant_depense || r.depense || r.argent || 0);
-        cash += m;
+        // NOMS EXACTS DE VOTRE XLSFORM
+        const valH = parseInt(r.nb_hommes || 0);
+        const valF = parseInt(r.nb_femmes || 0);
+        const valCash = parseFloat(r.montant_depense || 0);
 
-        // Cherche les bénéficiaires Femmes et Hommes
-        const bf = parseInt(r.nb_beneficiaires_f || r.femmes || r.beneficiaires_f || 0);
-        const bh = parseInt(r.nb_beneficiaires_h || r.hommes || r.beneficiaires_h || 0);
-        
-        ben += (bf + bh);
-        f += bf;
+        ben += (valH + valF);
+        f += valF;
+        cash += valCash;
 
         let s = (r.secteur_projet || 'Autre').toUpperCase();
         graph[s] = (graph[s] || 0) + 1;
@@ -155,7 +127,7 @@ function render() {
             tb.innerHTML += `<tr>
                 <td>${new Date(r._submission_time).toLocaleDateString()}</td>
                 <td><b>${r.zone_intervention || '-'}</b></td>
-                <td style="text-align:right"><b>${m.toLocaleString()} F</b></td>
+                <td style="text-align:right"><b>${valCash.toLocaleString()} F</b></td>
             </tr>`;
         }
     });
@@ -164,7 +136,6 @@ function render() {
     document.getElementById('v-gen').innerText = ben > 0 ? Math.round((f/ben)*100)+'%' : '0%';
     document.getElementById('v-cash').innerText = cash.toLocaleString() + ' F';
     document.getElementById('v-act').innerText = data.length;
-    
     updateChart(graph);
 }
 
@@ -174,7 +145,7 @@ function updateChart(obj) {
         type: 'doughnut',
         data: {
             labels: Object.keys(obj),
-            datasets: [{ data: Object.values(obj), backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981'] }]
+            datasets: [{ data: Object.values(obj), backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981', '#DB2777'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
     });
