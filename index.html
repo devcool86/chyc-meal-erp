@@ -10,6 +10,7 @@
 
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }</script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
@@ -19,10 +20,10 @@
             --gold: #B8972A; --gold-l: #D4AF45;
             --steel: #6E8CB5; --steel-l: #A8C0D8;
             --bg: #EEF2FA; --card: #fff;
-            --ok: #1A7A4A; --r: 14px; --shadow: 0 4px 12px rgba(15,27,66,0.08);
+            --r: 14px; --shadow: 0 4px 12px rgba(15,27,66,0.08);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); overflow-x: hidden; }
+        body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
         header { background: var(--navy-d); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo-box { display: flex; align-items: center; gap: 12px; }
         .logo-circle { width: 40px; height: 40px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--navy-d); }
@@ -41,10 +42,10 @@
         h2 { font-size: 0.9rem; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; }
         h2::before { content: ''; width: 4px; height: 18px; background: var(--gold); border-radius: 2px; }
         .chart-box { position: relative; height: 220px; }
-        .btn { background: var(--navy); color: #fff; padding: 15px; border-radius: 12px; font-weight: 700; display: flex; justify-content: center; text-decoration: none; }
+        .btn { background: var(--navy); color: #fff; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; justify-content: center; text-decoration: none; border: none; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        .btn-pdf { background: #555; color: #fff; font-size: 0.75rem; margin-bottom: 15px; }
         .btn-gold { background: var(--gold); color: var(--navy-d); }
         footer { text-align: center; padding: 20px; font-size: 0.7rem; color: var(--steel); }
-        #sync-loader { font-size: 0.6rem; color: var(--gold); margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -54,10 +55,10 @@
         <div class="logo-circle">CH</div>
         <div>
             <div style="font-weight: 800; font-size: 1rem;">CHYC-MEAL</div>
-            <div style="font-size: 0.6rem; color: var(--gold-l);">SYSTEME SAAS AUTOMATISÉ</div>
+            <div style="font-size: 0.6rem; color: var(--gold-l);">SAAS MEAL v4.2</div>
         </div>
     </div>
-    <div id="sync-status" style="font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;">Synchronisé</div>
+    <div id="sync-status" style="font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;">Initialisation...</div>
 </header>
 
 <div class="nav-tabs">
@@ -68,16 +69,13 @@
 
 <div class="container">
     <div id="dash" class="section active">
+        <button onclick="genererPDF()" class="btn btn-pdf">📄 GÉNÉRER RAPPORT PDF</button>
+        
         <div class="kpi-grid">
             <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span class="kpi-lab">Bénéficiaires</span></div>
             <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span class="kpi-lab">Intégration Genre</span></div>
             <div class="kpi-card"><span class="kpi-val" id="kpi-budget">0</span><span class="kpi-lab">Dépenses (CFA)</span></div>
-            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span class="kpi-lab">Activités</span></div>
-        </div>
-
-        <div class="card">
-            <h2>Évolution des Soumissions</h2>
-            <div class="chart-box"><canvas id="lineChart"></canvas></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span class="kpi-lab">Total Soumissions</span></div>
         </div>
 
         <div class="card">
@@ -88,7 +86,7 @@
 
     <div id="data" class="section">
         <div class="card">
-            <h2>Flux de données Kobo</h2>
+            <h2>Données en Temps Réel</h2>
             <div style="overflow-x: auto;">
                 <table style="width:100%; font-size: 0.75rem; border-collapse: collapse;">
                     <tbody id="table-body"></tbody>
@@ -100,35 +98,41 @@
     <div id="form" class="section">
         <div class="card" style="text-align: center;">
             <div style="font-size: 3rem;">📡</div>
-            <h2>Mode Collecte</h2>
-            <p style="font-size: 0.8rem; color: var(--steel);">Saisie en temps réel via KoboToolbox.</p><br>
+            <h2>Accès KoboToolbox</h2>
+            <p style="font-size: 0.8rem; color: var(--steel);">Saisie mobile sécurisée.</p><br>
             <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-gold">OUVRIR LE FORMULAIRE</a>
         </div>
     </div>
 </div>
 
-<footer>© 2026 CHYC CONSULTING - SaaS MEAL Automatisé</footer>
+<footer>© 2026 CHYC CONSULTING - Expertise MEAL Digital</footer>
 
 <script>
     const TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
     const ASSET_ID = 'AnJWsYbZiGvWEz3ZjmwcqY';
-    const URL = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+    // Utilisation d'un proxy pour éviter l'erreur de flux (CORS)
+    const PROXY = 'https://corsproxy.io/?';
+    const URL = PROXY + encodeURIComponent(`https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`);
 
-    let lineChart, pieChart;
+    let pieChart;
 
     async function syncSaaS() {
-        document.getElementById('sync-status').innerText = '⏳ Synchronisation...';
+        const status = document.getElementById('sync-status');
+        status.innerText = '⏳ Sync...';
         try {
             const res = await fetch(URL, { headers: { 'Authorization': `Token ${TOKEN}` } });
+            if(!res.ok) throw new Error();
             const data = await res.json();
             updateUI(data.results);
-            document.getElementById('sync-status').innerText = '✅ À jour';
+            status.innerText = '✅ Connecté';
         } catch (e) {
-            document.getElementById('sync-status').innerText = '❌ Erreur de flux';
+            status.innerText = '⚠️ Mode Hors-Ligne';
+            console.log("Erreur de connexion Kobo");
         }
     }
 
     function updateUI(results) {
+        if(!results) return;
         let totalH = 0, totalF = 0, budget = 0, secteurs = {};
         const body = document.getElementById('table-body');
         body.innerHTML = '';
@@ -137,15 +141,13 @@
             totalH += parseInt(entry.nb_beneficiaires_h || 0);
             totalF += parseInt(entry.nb_beneficiaires_f || 0);
             budget += parseInt(entry.montant_depense || 0);
-            
             let s = entry.secteur_projet || 'Autre';
             secteurs[s] = (secteurs[s] || 0) + 1;
 
-            if(i < 8) {
+            if(i < 10) {
                 body.innerHTML += `<tr style="border-bottom:1px solid #eee">
                     <td style="padding:10px">${new Date(entry._submission_time).toLocaleDateString()}</td>
                     <td><b>${entry.zone_intervention || 'N/A'}</b></td>
-                    <td style="text-align:right">${entry.nom_agent || ''}</td>
                 </tr>`;
             }
         });
@@ -153,24 +155,13 @@
         document.getElementById('kpi-ben').innerText = totalH + totalF;
         document.getElementById('kpi-budget').innerText = budget.toLocaleString();
         document.getElementById('kpi-form').innerText = results.length;
-        document.getElementById('kpi-genre').innerText = totalH+totalF > 0 ? Math.round((totalF/(totalH+totalF))*100)+'%' : '0%';
+        document.getElementById('kpi-genre').innerText = (totalH+totalF > 0) ? Math.round((totalF/(totalH+totalF))*100)+'%' : '0%';
 
-        renderCharts(results, secteurs);
+        renderPie(secteurs);
     }
 
-    function renderCharts(results, secteurs) {
-        if(lineChart) lineChart.destroy();
+    function renderPie(secteurs) {
         if(pieChart) pieChart.destroy();
-
-        lineChart = new Chart(document.getElementById('lineChart'), {
-            type: 'line',
-            data: {
-                labels: results.slice(0,10).reverse().map(r => new Date(r._submission_time).toLocaleDateString()),
-                datasets: [{ label: 'Activité', data: results.slice(0,10).map(() => 1), borderColor: '#B8972A', tension: 0.4 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-
         pieChart = new Chart(document.getElementById('pieChart'), {
             type: 'doughnut',
             data: {
@@ -179,6 +170,15 @@
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
+    }
+
+    async function genererPDF() {
+        const element = document.getElementById('dash');
+        const btn = document.querySelector('.btn-pdf');
+        btn.style.display = 'none';
+        const opt = { margin: 10, filename: 'Rapport_CHYC.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+        try { await html2pdf().set(opt).from(element).save(); } 
+        finally { btn.style.display = 'block'; }
     }
 
     function switchTab(id, el) {
