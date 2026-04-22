@@ -3,51 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>CHYC-MEAL ERP v6.0</title>
+    <title>CHYC-MEAL v7.0 | Dashboard Expert</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --navy: #1A2A5E; --gold: #B8972A; --bg: #EEF2FA; --card: #fff; --red: #ef4444; }
+        :root { --navy: #0F1B42; --gold: #B8972A; --bg: #F4F7FE; --accent: #2563EB; }
         body { margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
-        header { background: #0F1B42; color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        #sync-status { font-size: 0.6rem; font-weight: 800; padding: 5px 10px; border-radius: 20px; background: rgba(255,255,255,0.1); }
         
-        /* Filtres */
-        .filter-bar { background: var(--navy); padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: sticky; top: 55px; z-index: 90; }
-        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 8px; border-radius: 8px; font-size: 0.7rem; outline: none; }
-        
-        .container { padding: 15px; max-width: 800px; margin: 0 auto; }
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-        .kpi-card { background: var(--card); padding: 15px; border-radius: 12px; border-left: 4px solid var(--gold); position: relative; }
-        .kpi-val { display: block; font-size: 1.1rem; font-weight: 800; }
-        
-        /* Alerte Budget */
-        .alert-active { border-left-color: var(--red) !important; animation: pulse 2s infinite; }
-        .alert-label { color: var(--red) !important; font-weight: 800; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        /* Header & Navigation */
+        header { background: var(--navy); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 0.9rem; }
+        #sync-status { font-size: 0.65rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.1); }
 
-        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-        .chart-container { height: 200px; width: 100%; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        td { padding: 8px 0; border-bottom: 1px solid #eee; }
+        .filter-bar { background: #1A2A5E; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: sticky; top: 58px; z-index: 90; }
+        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; outline: none; width: 100%; font-family: 'Sora'; }
+
+        /* Dashboard Grid */
+        .container { padding: 20px; max-width: 900px; margin: 0 auto; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .kpi-card { background: #fff; padding: 20px; border-radius: 16px; border-bottom: 4px solid #E2E8F0; transition: 0.3s; }
+        .kpi-card.alert { border-bottom-color: #EF4444; animation: pulse 2s infinite; }
+        .kpi-val { display: block; font-size: 1.3rem; font-weight: 800; margin-bottom: 5px; }
+        .kpi-label { font-size: 0.65rem; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .card { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .card-title { font-size: 0.85rem; font-weight: 800; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        
+        .chart-container { height: 220px; width: 100%; position: relative; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th { text-align: left; padding: 10px; color: #64748B; border-bottom: 2px solid #F1F5F9; }
+        td { padding: 12px 10px; border-bottom: 1px solid #F8FAFC; }
+        .tag { padding: 4px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; background: #F1F5F9; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="display:flex; align-items:center; gap:8px;">
-        <div style="background:var(--gold); color:#000; padding:5px 8px; border-radius:5px; font-weight:800;">CH</div>
-        <span style="font-weight:800; font-size:0.8rem;">CHYC-MEAL 6.0</span>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div class="logo-box">CHYC</div>
+        <div style="font-weight:800; font-size:0.9rem; letter-spacing:-0.5px;">MEAL MONITOR v7.0</div>
     </div>
-    <div id="sync-status">CHARGEMENT...</div>
+    <div id="sync-status">INITIALISATION...</div>
 </header>
 
 <div class="filter-bar">
     <select id="filter-projet" onchange="applyFilters()">
-        <option value="ALL">TOUS LES PROJETS</option>
+        <option value="ALL">🏢 TOUS LES PROJETS</option>
     </select>
     <select id="filter-mois" onchange="applyFilters()">
-        <option value="ALL">TOUS LES MOIS</option>
+        <option value="ALL">📅 TOUTES LES DATES</option>
         <option value="0">Janvier</option><option value="1">Février</option>
         <option value="2">Mars</option><option value="3">Avril</option>
         <option value="4">Mai</option><option value="5">Juin</option>
@@ -59,126 +66,180 @@
 
 <div class="container">
     <div class="kpi-grid">
-        <div class="kpi-card"><span class="kpi-val" id="kpi-ben">0</span><span style="font-size:0.6rem; color:#6E8CB5;">BÉNÉFICIAIRES</span></div>
-        <div class="kpi-card"><span class="kpi-val" id="kpi-genre">0%</span><span style="font-size:0.6rem; color:#6E8CB5;">RATIO FEMMES</span></div>
+        <div class="kpi-card">
+            <span class="kpi-val" id="kpi-ben">0</span>
+            <span class="kpi-label">Impact (Bénéficiaires)</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-val" id="kpi-genre">0%</span>
+            <span class="kpi-label">Inclusion Femmes</span>
+        </div>
         <div class="kpi-card" id="card-budget">
             <span class="kpi-val" id="kpi-budget">0 F</span>
-            <span style="font-size:0.6rem; color:#6E8CB5;" id="lab-budget">BUDGET CONSOMMÉ</span>
+            <span class="kpi-label" id="lab-budget">Budget Décaissé</span>
         </div>
-        <div class="kpi-card"><span class="kpi-val" id="kpi-form">0</span><span style="font-size:0.6rem; color:#6E8CB5;">ACTIVITÉS</span></div>
+        <div class="kpi-card">
+            <span class="kpi-val" id="kpi-form">0</span>
+            <span class="kpi-label">Actions Terrain</span>
+        </div>
     </div>
 
     <div class="card">
-        <h2 style="font-size:0.75rem; margin-top:0;">SECTEURS D'INTERVENTION</h2>
+        <div class="card-title">ANALYSE PAR SECTEUR</div>
         <div class="chart-container"><canvas id="pieChart"></canvas></div>
     </div>
 
     <div class="card">
-        <h2 style="font-size:0.75rem; margin-top:0;">HISTORIQUE FILTRÉ</h2>
-        <table><tbody id="table-body"></tbody></table>
+        <div class="card-title">HISTORIQUE DES MISSIONS</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Localité</th>
+                    <th>Secteur</th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
     </div>
 </div>
 
 <script>
     const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK';
-    const SEUIL_BUDGET = 1000000; // Alerte si > 1 million F
-    let allData = [];
-    let myChart = null;
+    const SEUIL_ALERTE = 2000000; // Alerte rouge si > 2 millions F
+    let masterData = [];
+    let chartInstance = null;
 
-    async function fetchData() {
-        const url = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+    // Correspondance des labels secteurs selon votre XLS
+    const SECTEUR_LABELS = {
+        'sante': 'Santé',
+        'agriculture': 'Agriculture',
+        'microfinance': 'Microfinance',
+        'education': 'Éducation',
+        'wash': 'WASH',
+        'protection': 'Protection',
+        'logistique': 'Logistique'
+    };
+
+    async function init() {
+        const status = document.getElementById('sync-status');
+        const endpoint = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+        
         try {
-            const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-            const json = await res.json();
-            const data = JSON.parse(json.contents);
-            allData = data.results;
+            const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(endpoint)}`);
+            const json = await response.json();
+            const raw = JSON.parse(json.contents);
+            masterData = raw.results;
             
-            fillProjectFilter();
+            setupFilters();
             applyFilters();
-            document.getElementById('sync-status').innerText = '✅ LIVE';
+            status.innerText = '✅ SYNC TERMINÉE';
+            status.style.color = '#4ade80';
         } catch (e) {
-            document.getElementById('sync-status').innerText = '⚠️ ERREUR';
+            status.innerText = '⚠️ ERREUR KOBO';
+            status.style.color = '#fb7185';
         }
     }
 
-    function fillProjectFilter() {
-        const select = document.getElementById('filter-projet');
-        const projets = [...new Set(allData.map(r => r.code_projet || 'AUTRE'))];
-        projets.forEach(p => {
-            let opt = document.createElement('option');
-            opt.value = p; opt.innerText = p.toUpperCase();
-            select.appendChild(opt);
+    function setupFilters() {
+        const pSelect = document.getElementById('filter-projet');
+        // Liste unique des projets présents dans vos données
+        const uniqueProjets = [...new Set(masterData.map(r => r.code_projet))].filter(Boolean);
+        uniqueProjets.sort().forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p;
+            opt.innerText = p.replace('_', ' ').toUpperCase();
+            pSelect.appendChild(opt);
         });
     }
 
     function applyFilters() {
-        const projFilter = document.getElementById('filter-projet').value;
-        const moisFilter = document.getElementById('filter-mois').value;
+        const pVal = document.getElementById('filter-projet').value;
+        const mVal = document.getElementById('filter-mois').value;
 
-        const filtered = allData.filter(r => {
-            const date = new Date(r._submission_time);
-            const mMatch = moisFilter === 'ALL' || date.getMonth().toString() === moisFilter;
-            const pMatch = projFilter === 'ALL' || r.code_projet === projFilter;
+        const filtered = masterData.filter(r => {
+            const date = new Date(r.date_mission || r._submission_time);
+            const mMatch = mVal === 'ALL' || date.getMonth().toString() === mVal;
+            const pMatch = pVal === 'ALL' || r.code_projet === pVal;
             return mMatch && pMatch;
         });
 
-        renderDash(filtered);
+        updateUI(filtered);
     }
 
-    function renderDash(data) {
-        let ben = 0, fems = 0, cash = 0, sects = {};
+    function updateUI(data) {
+        let totalBen = 0, totalF = 0, totalCash = 0, sects = {};
         const tbody = document.getElementById('table-body');
         tbody.innerHTML = '';
 
         data.forEach((r, i) => {
-            const h = parseInt(r.nb_beneficiaires_h || 0);
-            const f = parseInt(r.nb_beneficiaires_f || 0);
-            ben += (h + f); fems += f;
-            cash += parseInt(r.montant_depense || 0);
-            let s = (r.secteur_projet || 'AUTRE').toUpperCase();
-            sects[s] = (sects[s] || 0) + 1;
+            // Mapping selon votre XLS
+            const h = parseInt(r.nb_beneficiaires_h || r.nb_apprenants_h || 0);
+            const f = parseInt(r.nb_beneficiaires_f || r.nb_apprenants_f || 0);
+            totalBen += (h + f);
+            totalF += f;
+            totalCash += parseFloat(r.montant_depense || 0);
+            
+            let sKey = r.secteur_projet || 'autre';
+            sects[sKey] = (sects[sKey] || 0) + 1;
 
-            if(i < 5) {
-                tbody.innerHTML += `<tr><td>${new Date(r._submission_time).toLocaleDateString()}</td><td><b>${r.zone_intervention || '-'}</b></td><td style="text-align:right;">${s}</td></tr>`;
+            if(i < 8) {
+                tbody.innerHTML += `<tr>
+                    <td>${new Date(r.date_mission || r._submission_time).toLocaleDateString('fr-FR', {day:'2-digit', month:'short'})}</td>
+                    <td><b>${r.zone_intervention || '-'}</b></td>
+                    <td><span class="tag">${SECTEUR_LABELS[sKey] || sKey.toUpperCase()}</span></td>
+                </tr>`;
             }
         });
 
-        // Mise à jour Chiffres
-        document.getElementById('kpi-ben').innerText = ben.toLocaleString();
-        document.getElementById('kpi-budget').innerText = cash.toLocaleString() + ' F';
+        // Mise à jour des compteurs
+        document.getElementById('kpi-ben').innerText = totalBen.toLocaleString();
+        document.getElementById('kpi-budget').innerText = totalCash.toLocaleString() + ' F';
         document.getElementById('kpi-form').innerText = data.length;
-        document.getElementById('kpi-genre').innerText = ben > 0 ? Math.round((fems/ben)*100)+'%' : '0%';
+        document.getElementById('kpi-genre').innerText = totalBen > 0 ? Math.round((totalF/totalBen)*100)+'%' : '0%';
 
         // Alerte Budget
-        const cardB = document.getElementById('card-budget');
-        const labB = document.getElementById('lab-budget');
-        if(cash > SEUIL_BUDGET) {
-            cardB.classList.add('alert-active');
-            labB.classList.add('alert-label');
-            labB.innerText = '⚠️ SEUIL DÉPASSÉ';
+        const bCard = document.getElementById('card-budget');
+        if(totalCash > SEUIL_ALERTE) {
+            bCard.classList.add('alert');
+            document.getElementById('lab-budget').innerText = '⚠️ ALERTE SEUIL';
         } else {
-            cardB.classList.remove('alert-active');
-            labB.classList.remove('alert-label');
-            labB.innerText = 'BUDGET CONSOMMÉ';
+            bCard.classList.remove('alert');
+            document.getElementById('lab-budget').innerText = 'BUDGET DÉCAISSÉ';
         }
 
         updateChart(sects);
     }
 
-    function updateChart(sects) {
+    function updateChart(sectsData) {
         const ctx = document.getElementById('pieChart').getContext('2d');
-        if(myChart) myChart.destroy();
-        myChart = new Chart(ctx, {
+        if(chartInstance) chartInstance.destroy();
+        
+        const labels = Object.keys(sectsData).map(k => SECTEUR_LABELS[k] || k.toUpperCase());
+        
+        chartInstance = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: Object.keys(sects),
-                datasets: [{ data: Object.values(sects), backgroundColor: ['#1A2A5E','#B8972A','#6E8CB5','#A8C0D8','#E2E8F0'] }]
+                labels: labels,
+                datasets: [{
+                    data: Object.values(sectsData),
+                    backgroundColor: ['#0F1B42', '#B8972A', '#2563EB', '#10B981', '#F59E0B', '#6366F1', '#94A3B8'],
+                    borderWidth: 4,
+                    borderColor: '#ffffff'
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '70%' }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10, family: 'Sora' } } }
+                },
+                cutout: '70%'
+            }
         });
     }
 
-    window.onload = fetchData;
+    window.onload = init;
 </script>
 </body>
 </html>
