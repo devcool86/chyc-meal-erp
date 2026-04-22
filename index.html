@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="theme-color" content="#1A2A5E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="CHYC-MEAL">
+    
+    <title>CHYC-MEAL ERP - CHYC CONSULTING</title>
+
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js');
+      }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy: #1A2A5E; --navy-d: #0F1B42; --navy-m: #243470;
+            --gold: #B8972A; --gold-l: #D4AF45;
+            --steel: #6E8CB5; --steel-l: #A8C0D8;
+            --bg: #EEF2FA; --card: #fff;
+            --ok: #1A7A4A; --ok-bg: #E8F5EE;
+            --warn: #C07A10; --warn-bg: #FEF3E2;
+            --err: #C0281A; --err-bg: #FDE8E6;
+            --r: 14px; --shadow: 0 4px 12px rgba(15,27,66,0.08);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            margin: 0; font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); 
+            line-height: 1.5; overflow-x: hidden;
+        }
+
+        header {
+            background: var(--navy-d); color: #fff; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 12px; }
+        .logo-circle { 
+            width: 40px; height: 40px; background: var(--gold); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--navy-d);
+        }
+        
+        .nav-tabs {
+            display: flex; background: var(--navy); padding: 5px; gap: 5px;
+            position: sticky; top: 70px; z-index: 90;
+        }
+        .tab {
+            flex: 1; text-align: center; padding: 10px; color: var(--steel-l);
+            font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer;
+        }
+        .tab.active { background: var(--navy-m); color: #fff; box-shadow: inset 0 0 0 1px var(--gold); }
+
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .kpi-card { background: var(--card); padding: 20px; border-radius: var(--r); box-shadow: var(--shadow); border-left: 4px solid var(--gold); }
+        .kpi-val { display: block; font-size: 1.6rem; font-weight: 800; color: var(--navy); }
+        .kpi-lab { font-size: 0.75rem; color: var(--steel); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card); border-radius: var(--r); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
+        h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--navy-d); }
+        h2::before { content: ''; width: 4px; height: 20px; background: var(--gold); border-radius: 2px; }
+
+        .data-table-wrapper { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: #fff; }
+        th { background: #f8f9fc; text-align: left; padding: 12px; border-bottom: 2px solid var(--bg); color: var(--steel); font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid var(--bg); }
+        
+        .badge { 
+            padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+        }
+        .badge-wash { background: #E3F2FD; color: #1976D2; }
+        .badge-agri { background: #E8F5EE; color: #1B5E20; }
+        .badge-prot { background: #FFF3E0; color: #E65100; }
+
+        .btn {
+            background: var(--navy); color: #fff; border: none; padding: 12px 20px;
+            border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .btn:active { transform: scale(0.98); background: var(--navy-d); }
+        .btn-gold { background: var(--gold); color: var(--navy-d); }
+
+        footer { text-align: center; padding: 30px; font-size: 0.75rem; color: var(--steel); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-box">
+        <div class="logo-circle">CH</div>
+        <div>
+            <div style="font-weight: 800; font-size: 1.1rem; line-height: 1.1;">CHYC-MEAL</div>
+            <div style="font-size: 0.65rem; color: var(--gold-l); letter-spacing: 1px;">CHYC CONSULTING</div>
+        </div>
+    </div>
+    <div style="font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;">v3.0 PRO</div>
+</header>
+
+<div class="nav-tabs">
+    <div class="tab active" onclick="switchTab('dash', this)">DASHBOARD</div>
+    <div class="tab" onclick="switchTab('data', this)">DONNÉES</div>
+    <div class="tab" onclick="switchTab('form', this)">COLLECTE</div>
+</div>
+
+<div class="container">
+    <div id="dash" class="section active">
+        <div class="kpi-grid">
+            <div class="kpi-card"><span class="kpi-val" id="kpi-ben">---</span><span class="kpi-lab">Bénéficiaires</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-budget">---</span><span class="kpi-lab">Budget Engagé</span></div>
+            <div class="kpi-card"><span class="kpi-val" id="kpi-zone">---</span><span class="kpi-lab">Zones</span></div>
+        </div>
+
+        <div class="card">
+            <h2>Répartition par Secteur</h2>
+            <div style="height: 10px; background: #eee; border-radius: 5px; overflow: hidden; display: flex;">
+                <div style="width: 45%; background: var(--navy);"></div>
+                <div style="width: 30%; background: var(--gold);"></div>
+                <div style="width: 25%; background: var(--steel);"></div>
+            </div>
+            <div style="display: flex; gap: 15px; margin-top: 15px; font-size: 0.75rem;">
+                <span>● WASH (45%)</span>
+                <span>● AGRI (30%)</span>
+                <span>● PROT (25%)</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="data" class="section">
+        <div class="card">
+            <h2>Dernières Activités</h2>
+            <div class="data-table-wrapper">
+                <table id="meal-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>ZONE</th>
+                            <th>SECTEUR</th>
+                            <th>H/F</th>
+                            <th>STATUT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="form" class="section">
+        <div class="card">
+            <h2>Nouvelle Entrée MEAL</h2>
+            <p style="font-size: 0.85rem; color: var(--steel);">Formulaire synchronisé avec KoboToolbox / MS Access.</p>
+            <button class="btn btn-gold" onclick="alert('Lien vers KoboToolbox configuré.')">OUVRIR LE FORMULAIRE</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    © 2026 CHYC CONSULTING - Expertise MEAL & Digitalisation<br>
+    Saint-Louis, Sénégal
+</footer>
+
+<script>
+    // DONNÉES SIMULÉES
+    const rawData = [
+        { date: '22/04', zone: 'Saint-Louis', secteur: 'WASH', h: 45, f: 62, statut: 'Validé' },
+        { date: '21/04', zone: 'Dakar', secteur: 'AGRI', h: 30, f: 12, statut: 'En attente' },
+        { date: '20/04', zone: 'Louga', secteur: 'PROT', h: 8, f: 25, statut: 'Validé' },
+        { date: '19/04', zone: 'Podor', secteur: 'WASH', h: 110, f: 145, statut: 'Validé' }
+    ];
+
+    function switchTab(id, el) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    }
+
+    function init() {
+        // Calcul KPIs
+        const totalBen = rawData.reduce((acc, curr) => acc + curr.h + curr.f, 0);
+        document.getElementById('kpi-ben').innerText = totalBen;
+        document.getElementById('kpi-budget').innerText = '1.4M';
+        document.getElementById('kpi-zone').innerText = '04';
+
+        // Table
+        const body = document.getElementById('table-body');
+        rawData.forEach(item => {
+            const row = `<tr>
+                <td>${item.date}</td>
+                <td><b>${item.zone}</b></td>
+                <td><span class="badge badge-${item.secteur.toLowerCase()}">${item.secteur}</span></td>
+                <td>${item.h}/${item.f}</td>
+                <td style="color: ${item.statut === 'Validé' ? 'var(--ok)' : 'var(--warn)'}">${item.statut}</td>
+            </tr>`;
+            body.innerHTML += row;
+        });
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+                                            </html>
+  
