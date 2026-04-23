@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#0F1B42">
-<title>CHYC-MEAL ERP v2.0</title>
+<title>CHYC-MEAL ERP v2.1</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -15,39 +15,45 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
 
-/* HEADER STYLE PRO */
+/* HEADER */
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);position:sticky;top:0;z-index:100}
 .hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px;margin-right:12px}
 .sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;transition:0.3s;font-size:12px}
-.sync-btn:hover{transform:scale(1.05);background:var(--gold2)}
 
 /* FILTRES */
 .filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 select{background:rgba(255,255,255,0.1);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;outline:none;font-size:12px}
-select option{background:var(--navy2)}
 
-/* KPI GRID */
+/* MAIN */
 .main{padding:15px;max-width:1100px;margin:0 auto}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:15px;margin-bottom:20px}
-.kpi-card{background:var(--card);padding:20px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);border-left:5px solid var(--gold);transition:0.3s}
-.kpi-card:hover{transform:translateY(-5px)}
-.kpi-label{font-size:10px;color:#64748B;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px;display:block}
-.kpi-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:800;color:var(--navy)}
 
-/* CHARTS & TABLES */
-.dashboard-row{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:20px;margin-bottom:20px}
-.glass-card{background:var(--card);border-radius:15px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05)}
-.card-title{font-size:14px;font-weight:700;margin-bottom:15px;display:flex;align-items:center;gap:8px;color:var(--navy2)}
+/* ACTIONS - LE BOUTON PDF EST ICI */
+.action-bar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.btn-action{padding:12px;border-radius:10px;border:none;font-family:'Sora',sans-serif;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn-kobo{background:var(--gold);color:var(--navy)}
+.btn-pdf{background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,0.2)}
 
-/* TABLEAU MODERNE */
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;padding:12px;background:#F8FAFC;color:#64748B;text-transform:uppercase;font-size:10px}
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--card);padding:18px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);border-left:5px solid var(--gold)}
+.kpi-label{font-size:9px;color:#64748B;text-transform:uppercase;font-weight:700;margin-bottom:5px;display:block}
+.kpi-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:800}
+
+.glass-card{background:var(--card);border-radius:15px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);margin-bottom:20px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:15px;color:var(--navy2)}
+
+/* TABLE */
+.table-container{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;padding:12px;background:#F8FAFC;color:#64748B}
 td{padding:12px;border-bottom:1px solid #F1F5F9}
-.badge{padding:4px 8px;border-radius:4px;font-weight:700;font-size:10px}
-.bg-sante{background:#E0F2FE;color:#0369A1}
-.bg-agri{background:#DCFCE7;color:#15803D}
-.bg-prot{background:#FEE2E2;color:#B91C1C}
 
+/* PRINT OPTIMIZATION */
+@media print {
+    .hdr, .filter-section, .action-bar, .sync-btn { display: none !important; }
+    body { background: white; }
+    .glass-card { box-shadow: none; border: 1px solid #eee; }
+}
 </style>
 </head>
 <body>
@@ -57,30 +63,23 @@ td{padding:12px;border-bottom:1px solid #F1F5F9}
     <div class="hdr-logo-box">CHYC</div>
     <div>
       <div style="font-weight:800;font-size:14px">CONSULTING</div>
-      <div style="font-size:9px;opacity:0.8">MEAL Intelligence System v2.0</div>
+      <div style="font-size:9px;opacity:0.8">MEAL Intelligence System v2.1</div>
     </div>
   </div>
-  <button class="sync-btn" id="syncBtn" onclick="fetchData()">🔄 ACTUALISER</button>
+  <button class="sync-btn" id="syncBtn" onclick="fetchData()">🔄 SYNC DATA</button>
 </header>
 
 <div class="filter-section">
-  <select id="fProj" onchange="render()">
-    <option value="ALL">📂 Tous les Projets</option>
-    <option value="P001">Appui Marchands Tabliers</option>
-    <option value="P002">Formation Numérique</option>
-    <option value="P003">Microfinance Saint-Louis</option>
-    <option value="P004">Santé Communautaire</option>
-  </select>
-  <select id="fSect" onchange="render()">
-    <option value="ALL">🎯 Tous les Secteurs</option>
-    <option value="sante">Santé</option>
-    <option value="agriculture">Agriculture</option>
-    <option value="protection">Protection & Genre</option>
-    <option value="logistique">Logistique</option>
-  </select>
+  <select id="fProj" onchange="render()"><option value="ALL">📂 Tous les Projets</option></select>
+  <select id="fSect" onchange="render()"><option value="ALL">🎯 Tous les Secteurs</option></select>
 </div>
 
 <div class="main">
+  <div class="action-bar">
+    <a href="https://ee.kobotoolbox.org/x/aL4EkYb8XAiZW5oTHBbCFK" target="_blank" class="btn-action btn-kobo">➕ NOUVELLE FICHE</a>
+    <button onclick="window.print()" class="btn-action btn-pdf">📄 EXPORTER RAPPORT (PDF)</button>
+  </div>
+
   <div class="kpi-grid">
     <div class="kpi-card"><span class="kpi-label">Bénéficiaires</span><span class="kpi-val" id="vTotal">0</span></div>
     <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Distribués</span><span class="kpi-val" id="vKits">0</span></div>
@@ -88,33 +87,22 @@ td{padding:12px;border-bottom:1px solid #F1F5F9}
     <div class="kpi-card" style="border-left-color:var(--accent)"><span class="kpi-label">Dépenses (XOF)</span><span class="kpi-val" id="vBudget">0</span></div>
   </div>
 
-  <div class="dashboard-row">
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
     <div class="glass-card">
-      <div class="card-title">📊 Répartition par Secteur</div>
-      <div style="height:250px"><canvas id="sectorChart"></canvas></div>
+        <div class="card-title">📊 Répartition des Activités</div>
+        <div style="height:220px"><canvas id="sectorChart"></canvas></div>
     </div>
-
     <div class="glass-card">
-      <div class="card-title">📈 Performance Sectorielle</div>
-      <div id="sectorDetails" style="font-size:13px; line-height:2">
-        <p style="color:#64748B italic">Sélectionnez un secteur pour voir les détails...</p>
-      </div>
+        <div class="card-title">📈 Performance Technique</div>
+        <div id="sectorDetails" style="font-size:12px; line-height:2.2"></div>
     </div>
   </div>
 
   <div class="glass-card">
-    <div class="card-title">📋 Journal des Activités Terrain</div>
-    <div style="overflow-x:auto">
+    <div class="card-title">📋 Journal des Activités</div>
+    <div class="table-container">
       <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Agent</th>
-            <th>Secteur</th>
-            <th>Zone</th>
-            <th>Impact</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Date</th><th>Agent</th><th>Secteur</th><th>Zone</th><th>Impact</th></tr></thead>
         <tbody id="tblBody"></tbody>
       </table>
     </div>
@@ -133,77 +121,83 @@ async function fetchData() {
     const btn = document.getElementById('syncBtn');
     btn.textContent = '⌛ Synchronisation...';
     
+    // Correction de l'URL pour éviter l'erreur de connexion
     const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
-    const finalUrl = PROXY + encodeURIComponent(targetUrl) + '&t=' + Date.now();
+    const finalUrl = PROXY + encodeURIComponent(targetUrl) + '&cache=' + Math.random();
     
     try {
         const response = await fetch(finalUrl);
+        if (!response.ok) throw new Error('Proxy instable');
+        
         const outerData = await response.json();
         const data = JSON.parse(outerData.contents);
-        rawData = data.results;
-        btn.textContent = '✅ ' + rawData.length + ' Données';
-        render();
+        
+        if (data && data.results) {
+            rawData = data.results;
+            btn.textContent = '✅ ' + rawData.length + ' Entrées';
+            updateFilters();
+            render();
+        }
     } catch (e) {
-        btn.textContent = '❌ Erreur';
-        console.error(e);
+        btn.textContent = '❌ Erreur de lien';
+        console.error("Détails de l'erreur:", e);
     }
 }
 
+function updateFilters() {
+    const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean);
+    const sects = [...new Set(rawData.map(r => r.secteur_projet))].filter(Boolean);
+    
+    const pSel = document.getElementById('fProj');
+    const sSel = document.getElementById('fSect');
+    
+    projs.forEach(p => pSel.innerHTML += `<option value="${p}">${p}</option>`);
+    sects.forEach(s => sSel.innerHTML += `<option value="${s}">${s}</option>`);
+}
+
 function render() {
-    const projF = document.getElementById('fProj').value;
-    const sectF = document.getElementById('fSect').value;
+    const pF = document.getElementById('fProj').value;
+    const sF = document.getElementById('fSect').value;
 
     const filtered = rawData.filter(r => {
-        const pMatch = (projF === 'ALL' || r.code_projet === projF);
-        const sMatch = (sectF === 'ALL' || r.secteur_projet === sectF);
-        return pMatch && sMatch;
+        return (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF);
     });
 
-    // Calculs KPI
-    let totalBen=0, totalF=0, totalKits=0, totalBudget=0;
-    let specSante=0, specVBG=0, specForm=0;
-
+    let bH=0, bF=0, kits=0, cash=0, sante=0, vbg=0, edu=0;
     const tbody = document.getElementById('tblBody');
     tbody.innerHTML = '';
 
     filtered.forEach(r => {
         const h = Number(r.nb_beneficiaires_h || 0);
         const f = Number(r.nb_beneficiaires_f || 0);
-        totalBen += (h + f);
-        totalF += f;
-        totalKits += Number(r.nb_kits_distribues || 0);
-        totalBudget += Number(r.montant_depense || 0);
+        bH += h; bF += f;
+        kits += Number(r.nb_kits_distribues || 0);
+        cash += Number(r.montant_depense || 0);
+        sante += Number(r.nb_consultations || 0);
+        vbg += Number(r.nb_cas_VBG_documentes || 0);
+        edu += Number(r.nb_personnes_formees || 0);
 
-        // Indicateurs spécifiques
-        specSante += Number(r.nb_consultations || 0);
-        specVBG += Number(r.nb_cas_VBG_documentes || 0);
-        specForm += Number(r.nb_personnes_formees || 0);
-
-        const dateShort = r.date_mission ? r.date_mission.split('T')[0] : '-';
-        
-        tbody.innerHTML += `
-            <tr>
-                <td>${dateShort}</td>
-                <td><b>${r.nom_agent || '-'}</b></td>
-                <td><span class="badge bg-${r.secteur_projet}">${r.secteur_projet}</span></td>
-                <td>${r.zone_intervention || '-'}</td>
-                <td>${h+f} bénéf.</td>
-            </tr>`;
+        tbody.innerHTML += `<tr>
+            <td>${(r.date_mission || '').split('T')[0]}</td>
+            <td><b>${r.nom_agent || '-'}</b></td>
+            <td>${r.secteur_projet || '-'}</td>
+            <td>${r.zone_intervention || '-'}</td>
+            <td>${h+f} bénéf.</td>
+        </tr>`;
     });
 
-    // Mise à jour UI
-    document.getElementById('vTotal').textContent = totalBen.toLocaleString();
-    document.getElementById('vKits').textContent = totalKits.toLocaleString();
-    document.getElementById('vBudget').textContent = totalBudget.toLocaleString();
-    document.getElementById('vFemmes').textContent = totalBen > 0 ? Math.round((totalF/totalBen)*100)+'%' : '0%';
+    const total = bH + bF;
+    document.getElementById('vTotal').textContent = total.toLocaleString();
+    document.getElementById('vKits').textContent = kits.toLocaleString();
+    document.getElementById('vBudget').textContent = cash.toLocaleString();
+    document.getElementById('vFemmes').textContent = total > 0 ? Math.round((bF/total)*100)+'%' : '0%';
 
-    // Détails performance
     document.getElementById('sectorDetails').innerHTML = `
-        <div style="display:flex; justify-content:space-between"><span>🏥 Consultations Santé:</span> <b>${specSante}</b></div>
-        <div style="display:flex; justify-content:space-between"><span>🛡️ Cas Protection/VBG:</span> <b>${specVBG}</b></div>
-        <div style="display:flex; justify-content:space-between"><span>🎓 Personnes Formées:</span> <b>${specForm}</b></div>
-        <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1px solid #eee">
-            <span>📦 Ratio Kit/Bénéficiaire:</span> <b>${totalBen > 0 ? (totalKits/totalBen).toFixed(2) : 0}</b>
+        <div style="display:flex;justify-content:space-between"><span>🏥 Consultations:</span><b>${sante}</b></div>
+        <div style="display:flex;justify-content:space-between"><span>🛡️ Protection VBG:</span><b>${vbg}</b></div>
+        <div style="display:flex;justify-content:space-between"><span>🎓 Formations:</span><b>${edu}</b></div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;font-weight:700">
+            Moyenne Dépense/Mission: ${filtered.length > 0 ? Math.round(cash/filtered.length).toLocaleString() : 0} F
         </div>
     `;
 
@@ -217,20 +211,15 @@ function updateChart(data) {
 
     if (myChart) myChart.destroy();
     myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
             labels: Object.keys(counts),
             datasets: [{
-                label: 'Nombre de missions',
                 data: Object.values(counts),
                 backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777']
             }]
         },
-        options: { 
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, grid: { display: false } } }
-        }
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 }
 
