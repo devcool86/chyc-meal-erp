@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#0F1B42">
-<title>CHYC-MEAL ERP v2.1</title>
+<title>CHYC-MEAL ERP v2.2</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--gold2:#D4AF45;
@@ -17,19 +17,17 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);paddin
 
 /* HEADER */
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);position:sticky;top:0;z-index:100}
-.hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px;margin-right:12px}
-.sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;transition:0.3s;font-size:12px}
+.hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px}
+.sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;font-size:12px}
 
 /* FILTRES */
 .filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-select{background:rgba(255,255,255,0.1);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;outline:none;font-size:12px}
+select{background:rgba(255,255,255,0.1);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:12px;outline:none}
 
 /* MAIN */
 .main{padding:15px;max-width:1100px;margin:0 auto}
-
-/* ACTIONS - LE BOUTON PDF EST ICI */
 .action-bar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.btn-action{padding:12px;border-radius:10px;border:none;font-family:'Sora',sans-serif;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn-action{padding:12px;border-radius:10px;border:none;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;text-align:center}
 .btn-kobo{background:var(--gold);color:var(--navy)}
 .btn-pdf{background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,0.2)}
 
@@ -48,25 +46,25 @@ table{width:100%;border-collapse:collapse;font-size:11px}
 th{text-align:left;padding:12px;background:#F8FAFC;color:#64748B}
 td{padding:12px;border-bottom:1px solid #F1F5F9}
 
-/* PRINT OPTIMIZATION */
+/* PRINT */
 @media print {
     .hdr, .filter-section, .action-bar, .sync-btn { display: none !important; }
-    body { background: white; }
-    .glass-card { box-shadow: none; border: 1px solid #eee; }
+    .main { padding: 0; }
+    .glass-card { box-shadow: none; border: 1px solid #eee; break-inside: avoid; }
 }
 </style>
 </head>
 <body>
 
 <header class="hdr">
-  <div style="display:flex;align-items:center">
+  <div style="display:flex;align-items:center;gap:10px">
     <div class="hdr-logo-box">CHYC</div>
     <div>
       <div style="font-weight:800;font-size:14px">CONSULTING</div>
-      <div style="font-size:9px;opacity:0.8">MEAL Intelligence System v2.1</div>
+      <div style="font-size:9px;opacity:0.8">MEAL Intelligence System</div>
     </div>
   </div>
-  <button class="sync-btn" id="syncBtn" onclick="fetchData()">🔄 SYNC DATA</button>
+  <button class="sync-btn" id="syncBtn" onclick="fetchData()">🔄 ACTUALISER</button>
 </header>
 
 <div class="filter-section">
@@ -74,10 +72,10 @@ td{padding:12px;border-bottom:1px solid #F1F5F9}
   <select id="fSect" onchange="render()"><option value="ALL">🎯 Tous les Secteurs</option></select>
 </div>
 
-<div class="main">
+<div class="main" id="reportArea">
   <div class="action-bar">
     <a href="https://ee.kobotoolbox.org/x/aL4EkYb8XAiZW5oTHBbCFK" target="_blank" class="btn-action btn-kobo">➕ NOUVELLE FICHE</a>
-    <button onclick="window.print()" class="btn-action btn-pdf">📄 EXPORTER RAPPORT (PDF)</button>
+    <button onclick="window.print()" class="btn-action btn-pdf">📄 GÉNÉRER PDF</button>
   </div>
 
   <div class="kpi-grid">
@@ -89,7 +87,7 @@ td{padding:12px;border-bottom:1px solid #F1F5F9}
 
   <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
     <div class="glass-card">
-        <div class="card-title">📊 Répartition des Activités</div>
+        <div class="card-title">📊 Répartition par Secteur</div>
         <div style="height:220px"><canvas id="sectorChart"></canvas></div>
     </div>
     <div class="glass-card">
@@ -99,10 +97,10 @@ td{padding:12px;border-bottom:1px solid #F1F5F9}
   </div>
 
   <div class="glass-card">
-    <div class="card-title">📋 Journal des Activités</div>
+    <div class="card-title">📋 Journal de Terrain</div>
     <div class="table-container">
       <table>
-        <thead><tr><th>Date</th><th>Agent</th><th>Secteur</th><th>Zone</th><th>Impact</th></tr></thead>
+        <thead><tr><th>Date</th><th>Agent</th><th>Secteur</th><th>Impact</th></tr></thead>
         <tbody id="tblBody"></tbody>
       </table>
     </div>
@@ -112,44 +110,58 @@ td{padding:12px;border-bottom:1px solid #F1F5F9}
 <script>
 const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK'; 
 const API_TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
-const PROXY = 'https://api.allorigins.win/get?url=';
+
+// Méthode de secours si AllOrigins échoue :
+const PROXY_LIST = [
+    'https://api.allorigins.win/get?url=',
+    'https://thingproxy.freeboard.io/fetch/'
+];
 
 let rawData = [];
 let myChart = null;
 
 async function fetchData() {
     const btn = document.getElementById('syncBtn');
-    btn.textContent = '⌛ Synchronisation...';
-    
-    // Correction de l'URL pour éviter l'erreur de connexion
+    btn.textContent = '⌛ Connexion...';
+    btn.style.background = 'var(--gold2)';
+
     const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
-    const finalUrl = PROXY + encodeURIComponent(targetUrl) + '&cache=' + Math.random();
     
     try {
-        const response = await fetch(finalUrl);
-        if (!response.ok) throw new Error('Proxy instable');
+        // Tentative avec Proxy 1 (AllOrigins)
+        const resp = await fetch(PROXY_LIST[0] + encodeURIComponent(targetUrl) + '&t=' + Date.now());
+        if (!resp.ok) throw new Error();
+        const json = await resp.json();
         
-        const outerData = await response.json();
-        const data = JSON.parse(outerData.contents);
+        // Extraction sécurisée du contenu
+        const content = typeof json.contents === 'string' ? JSON.parse(json.contents) : json.contents;
         
-        if (data && data.results) {
-            rawData = data.results;
-            btn.textContent = '✅ ' + rawData.length + ' Entrées';
+        if (content && content.results) {
+            rawData = content.results;
+            btn.textContent = '✅ ' + rawData.length + ' Données';
+            btn.style.background = 'var(--ok)';
+            btn.style.color = '#fff';
             updateFilters();
             render();
+        } else {
+            throw new Error("Format invalide");
         }
     } catch (e) {
-        btn.textContent = '❌ Erreur de lien';
-        console.error("Détails de l'erreur:", e);
+        btn.textContent = '❌ Erreur Lien';
+        btn.style.background = 'var(--err)';
+        console.error("Détails:", e);
+        alert("Erreur de connexion. Vérifiez que votre projet Kobo est bien PUBLIC ou redéployé.");
     }
 }
 
 function updateFilters() {
     const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean);
     const sects = [...new Set(rawData.map(r => r.secteur_projet))].filter(Boolean);
-    
     const pSel = document.getElementById('fProj');
     const sSel = document.getElementById('fSect');
+    
+    pSel.innerHTML = '<option value="ALL">📂 Tous les Projets</option>';
+    sSel.innerHTML = '<option value="ALL">🎯 Tous les Secteurs</option>';
     
     projs.forEach(p => pSel.innerHTML += `<option value="${p}">${p}</option>`);
     sects.forEach(s => sSel.innerHTML += `<option value="${s}">${s}</option>`);
@@ -158,10 +170,7 @@ function updateFilters() {
 function render() {
     const pF = document.getElementById('fProj').value;
     const sF = document.getElementById('fSect').value;
-
-    const filtered = rawData.filter(r => {
-        return (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF);
-    });
+    const filtered = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF));
 
     let bH=0, bF=0, kits=0, cash=0, sante=0, vbg=0, edu=0;
     const tbody = document.getElementById('tblBody');
@@ -181,7 +190,6 @@ function render() {
             <td>${(r.date_mission || '').split('T')[0]}</td>
             <td><b>${r.nom_agent || '-'}</b></td>
             <td>${r.secteur_projet || '-'}</td>
-            <td>${r.zone_intervention || '-'}</td>
             <td>${h+f} bénéf.</td>
         </tr>`;
     });
@@ -196,11 +204,7 @@ function render() {
         <div style="display:flex;justify-content:space-between"><span>🏥 Consultations:</span><b>${sante}</b></div>
         <div style="display:flex;justify-content:space-between"><span>🛡️ Protection VBG:</span><b>${vbg}</b></div>
         <div style="display:flex;justify-content:space-between"><span>🎓 Formations:</span><b>${edu}</b></div>
-        <div style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;font-weight:700">
-            Moyenne Dépense/Mission: ${filtered.length > 0 ? Math.round(cash/filtered.length).toLocaleString() : 0} F
-        </div>
     `;
-
     updateChart(filtered);
 }
 
@@ -208,7 +212,6 @@ function updateChart(data) {
     const ctx = document.getElementById('sectorChart').getContext('2d');
     const counts = {};
     data.forEach(r => { counts[r.secteur_projet] = (counts[r.secteur_projet] || 0) + 1; });
-
     if (myChart) myChart.destroy();
     myChart = new Chart(ctx, {
         type: 'doughnut',
@@ -219,7 +222,7 @@ function updateChart(data) {
                 backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777']
             }]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels:{boxWidth:10, font:{size:10}} } } }
     });
 }
 
