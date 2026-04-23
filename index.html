@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CHYC CONSULTING - MEAL v2.8</title>
+<title>CHYC-MEAL ERP v2.9 FINAL</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;--err:#EF4444;}
@@ -12,9 +13,13 @@
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
 .hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px}
-.sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;font-size:11px}
+.btn-group{display:flex;gap:8px}
+.action-btn{border:none;padding:10px 15px;border-radius:25px;font-weight:700;cursor:pointer;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.btn-sync{background:var(--gold);color:var(--navy)}
+.btn-pdf{background:var(--steel, #6E8CB5);color:white}
+.btn-kobo{background:var(--ok);color:white}
 .filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-select{background:rgba(255,255,255,0.2);color:#fff;border:1px solid var(--gold);padding:12px;border-radius:8px;font-size:11px;outline:none;width:100%;cursor:pointer}
+select{background:rgba(255,255,255,0.2);color:#fff;border:1px solid var(--gold);padding:12px;border-radius:8px;font-size:11px;outline:none;width:100%}
 .main{padding:15px;max-width:1100px;margin:0 auto}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--card);padding:18px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);border-left:5px solid var(--gold)}
@@ -22,7 +27,7 @@ select{background:rgba(255,255,255,0.2);color:#fff;border:1px solid var(--gold);
 .kpi-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:800}
 .glass-card{background:var(--card);border-radius:15px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);margin-bottom:20px}
 table{width:100%;border-collapse:collapse;font-size:10px}
-th{text-align:left;padding:10px;background:#F8FAFC;color:#64748B}
+th{text-align:left;padding:10px;background:#F8FAFC}
 td{padding:10px;border-bottom:1px solid #F1F5F9}
 </style>
 </head>
@@ -31,9 +36,16 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
 <header class="hdr">
   <div style="display:flex;align-items:center;gap:10px">
     <div class="hdr-logo-box">CHYC</div>
-    <div><div style="font-weight:800;font-size:14px">CONSULTING</div><div style="font-size:9px;opacity:0.8">MEAL Intelligence</div></div>
+    <div class="title-text">
+        <div style="font-weight:800;font-size:14px">CONSULTING</div>
+        <div style="font-size:9px;opacity:0.8">MEAL Intelligence</div>
+    </div>
   </div>
-  <button class="sync-btn" id="syncBtn" onclick="fetchData()">🔄 ACTUALISER</button>
+  <div class="btn-group">
+    <button class="action-btn btn-sync" id="syncBtn" onclick="fetchData()">🔄 MAJ</button>
+    <button class="action-btn btn-pdf" onclick="exportToPDF()">📄 PDF</button>
+    <a href="https://ee.kobotoolbox.org/x/aL4EkYb8XAiZW5oTHBbCFK" target="_blank" class="action-btn btn-kobo">➕ COLLECTE</a>
+  </div>
 </header>
 
 <div class="filter-section">
@@ -57,21 +69,21 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
   </select>
 </div>
 
-<div class="main">
+<div class="main" id="reportContent">
   <div class="kpi-grid">
     <div class="kpi-card"><span class="kpi-label">Bénéficiaires</span><span class="kpi-val" id="vTotal">0</span></div>
     <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Distribués</span><span class="kpi-val" id="vKits">0</span></div>
     <div class="kpi-card" style="border-left-color:#DB2777"><span class="kpi-label">% Femmes</span><span class="kpi-val" id="vFemmes">0%</span></div>
-    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Dépenses (XOF)</span><span class="kpi-val" id="vBudget">0</span></div>
+    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Budget (XOF)</span><span class="kpi-val" id="vBudget">0</span></div>
   </div>
 
   <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 ANALYSE PAR SECTEUR</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 REPARTITION SECTORIELLE</div>
         <div style="height:220px"><canvas id="sectorChart"></canvas></div>
     </div>
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 JOURNAL DE TERRAIN (Dernières 10)</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 JOURNAL DE TERRAIN</div>
         <div style="overflow-x:auto">
           <table>
             <thead><tr><th>Date</th><th>Agent / Zone</th><th>Impact</th></tr></thead>
@@ -90,7 +102,7 @@ let myChart = null;
 
 async function fetchData() {
     const btn = document.getElementById('syncBtn');
-    btn.textContent = '⌛ Synchronisation...';
+    btn.textContent = '...';
     const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
     try {
         const resp = await fetch(PROXY + encodeURIComponent(targetUrl) + '&t=' + Date.now());
@@ -98,10 +110,10 @@ async function fetchData() {
         const content = JSON.parse(json.contents);
         if (content.results) {
             rawData = content.results;
-            btn.textContent = '✅ ' + rawData.length + ' MISSIONS';
+            btn.textContent = '✅ ' + rawData.length;
             render();
         }
-    } catch (e) { btn.textContent = '❌ Erreur Kobo'; }
+    } catch (e) { btn.textContent = '❌'; }
 }
 
 function render() {
@@ -119,18 +131,14 @@ function render() {
     tbody.innerHTML = '';
 
     filtered.forEach((r, idx) => {
-        // Extraction précise selon votre fichier SURVEY.CSV
         const h = parseInt(r.nb_beneficiaires_h || 0);
         const f = parseInt(r.nb_beneficiaires_f || 0);
-        const k = parseInt(r.nb_kits_distribues || 0);
-        const b = parseFloat(r.montant_depense || 0);
-
         bTotal += (h + f);
         bF += f;
-        kits += k;
-        budget += b;
+        kits += parseInt(r.nb_kits_distribues || 0);
+        budget += parseFloat(r.montant_depense || 0);
 
-        if(idx < 10) {
+        if(idx < 8) {
             tbody.innerHTML += `<tr>
                 <td>${(r.date_mission || '').split('T')[0]}</td>
                 <td><b>${r.nom_agent || 'N/A'}</b><br><small>${r.zone_intervention || ''}</small></td>
@@ -162,11 +170,23 @@ function updateChart(data) {
             labels: Object.keys(sectors),
             datasets: [{ 
                 data: Object.values(sectors), 
-                backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777', '#F59E0B', '#64748B'] 
+                backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777'] 
             }]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } } }
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
+}
+
+function exportToPDF() {
+    const element = document.getElementById('reportContent');
+    const opt = {
+        margin: 10,
+        filename: 'Rapport_CHYC_MEAL.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
 }
 
 window.onload = fetchData;
