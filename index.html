@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CHYC-MEAL ERP v3.5</title>
+<title>CHYC-MEAL ERP v3.7</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +13,8 @@
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
 .btn-group{display:flex;gap:5px}
-.action-btn{border:none;padding:10px 12px;border-radius:25px;font-weight:700;cursor:pointer;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;color:#fff}
+.action-btn{border:none;padding:10px 12px;border-radius:25px;font-weight:700;cursor:pointer;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;color:#fff;transition:0.3s}
+.action-btn:active{transform:scale(0.9)}
 .btn-sync{background:var(--gold);color:var(--navy)}
 .btn-pdf{background:#6E8CB5}
 .btn-kobo{background:var(--ok)}
@@ -72,16 +73,16 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
     <div class="kpi-card"><span class="kpi-label">Bénéficiaires</span><span class="kpi-val" id="vTotal">0</span></div>
     <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Livrés</span><span class="kpi-val" id="vKits">0</span></div>
     <div class="kpi-card" style="border-left-color:#DB2777"><span class="kpi-label">% Femmes</span><span class="kpi-val" id="vFemmes">0%</span></div>
-    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Dépenses XOF</span><span class="kpi-val" id="vBudget">0</span></div>
+    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Budget XOF</span><span class="kpi-val" id="vBudget">0</span></div>
   </div>
 
   <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:15px;">
     <div class="glass-card">
-        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📊 RÉPARTITION</div>
-        <div style="height:200px"><canvas id="sectorChart"></canvas></div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📊 IMPACT PAR SECTEUR</div>
+        <div style="height:220px"><canvas id="sectorChart"></canvas></div>
     </div>
     <div class="glass-card">
-        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📋 DERNIÈRES ACTIVITÉS</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📋 DERNIÈRES MISSIONS</div>
         <div style="overflow-x:auto">
           <table>
             <thead><tr><th>Date</th><th>Agent / Localité</th><th>Impact</th></tr></thead>
@@ -102,7 +103,6 @@ let myChart = null;
 async function fetchData() {
     const btn = document.getElementById('syncBtn');
     btn.innerHTML = '⏳...';
-    
     const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
     
     try {
@@ -110,18 +110,14 @@ async function fetchData() {
             method: 'GET',
             headers: { 'Authorization': `Token ${TOKEN}` }
         });
-
-        if (!response.ok) throw new Error('Erreur API');
-        
+        if (!response.ok) throw new Error('API Error');
         const content = await response.json();
-        
         if (content.results) {
             rawData = content.results;
             btn.innerHTML = '✅ ' + rawData.length;
             render();
         }
     } catch (e) { 
-        console.error(e);
         btn.innerHTML = '❌ Erreur'; 
     }
 }
@@ -141,7 +137,7 @@ function render() {
     tbody.innerHTML = '';
 
     filtered.forEach((r, idx) => {
-        // Lecture forcée des nombres pour éviter les "0"
+        // Lecture précise des colonnes de votre XLSForm
         const h = parseInt(r.nb_beneficiaires_h) || 0;
         const f = parseInt(r.nb_beneficiaires_f) || 0;
         const kits = parseInt(r.nb_kits_distribues) || 0;
@@ -157,12 +153,11 @@ function render() {
                 <tr>
                     <td>${(r.date_mission || '').split('T')[0]}</td>
                     <td><b>${r.nom_agent || 'N/A'}</b><br>${r.zone_intervention || 'N/A'}</td>
-                    <td>${h + f}</td>
+                    <td>${h + f} Pers.</td>
                 </tr>`;
         }
     });
 
-    // Mise à jour des chiffres avec animation de texte
     document.getElementById('vTotal').textContent = bT.toLocaleString();
     document.getElementById('vKits').textContent = k.toLocaleString();
     document.getElementById('vBudget').textContent = b.toLocaleString() + ' F';
@@ -178,39 +173,23 @@ function updateChart(data) {
         const v = r.secteur_projet || 'Autre'; 
         s[v] = (s[v] || 0) + 1; 
     });
-    
     if (myChart) myChart.destroy();
     myChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: Object.keys(s),
-            datasets: [{
-                data: Object.values(s),
-                backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777']
-            }]
+            datasets: [{ data: Object.values(s), backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777'] }]
         },
-        options: {
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }
-            }
-        }
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
     });
 }
 
 function exportToPDF() {
     const element = document.getElementById('reportContent');
-    const opt = {
-        margin: 10,
-        filename: 'Rapport_CHYC_MEAL.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    const opt = { margin: 10, filename: 'CHYC_MEAL_Rapport.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
     html2pdf().set(opt).from(element).save();
 }
 
-// Lancement automatique
 window.onload = fetchData;
 </script>
 </body>
