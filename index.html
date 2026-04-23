@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#0F1B42">
-<title>CHYC-MEAL ERP v2.3</title>
+<title>CHYC-MEAL ERP v2.4</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -18,11 +18,11 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);paddin
 /* HEADER */
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);position:sticky;top:0;z-index:100}
 .hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px}
-.sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;font-size:11px}
+.sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;font-size:11px;min-width:140px}
 
 /* FILTRES */
 .filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-select{background:rgba(255,255,255,0.15);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:11px;outline:none;font-family:inherit}
+select{background:rgba(255,255,255,0.15);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:11px;outline:none}
 
 /* MAIN */
 .main{padding:15px;max-width:1100px;margin:0 auto}
@@ -127,6 +127,7 @@ let myChart = null;
 async function fetchData() {
     const btn = document.getElementById('syncBtn');
     btn.textContent = '⌛ Connexion...';
+    btn.style.background = 'var(--gold2)';
     
     const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
     const finalUrl = PROXY + encodeURIComponent(targetUrl) + '&t=' + Date.now();
@@ -138,13 +139,20 @@ async function fetchData() {
         
         if (content && content.results) {
             rawData = content.results;
-            btn.textContent = '✅ ' + rawData.length + ' DONNÉES';
+            if(rawData.length > 0) {
+                btn.textContent = '✅ ' + rawData.length + ' DONNÉES';
+                btn.style.background = 'var(--ok)';
+                btn.style.color = '#fff';
+            } else {
+                btn.textContent = '🌐 CONNECTÉ (VIDE)';
+                btn.style.background = '#334155';
+                btn.style.color = '#fff';
+            }
             render();
         }
     } catch (e) {
-        btn.textContent = '❌ LIEN OK (0)';
-        console.error(e);
-        // On rend quand même pour afficher les listes pré-remplies
+        btn.textContent = '❌ ERREUR SERVEUR';
+        btn.style.background = 'var(--err)';
         render();
     }
 }
@@ -152,7 +160,6 @@ async function fetchData() {
 function render() {
     const pF = document.getElementById('fProj').value;
     const sF = document.getElementById('fSect').value;
-    
     const filtered = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF));
 
     let bH=0, bF=0, kits=0, cash=0, sante=0, vbg=0, edu=0;
@@ -198,10 +205,9 @@ function updateChart(data) {
     
     if (myChart) myChart.destroy();
     
-    // Si pas de données, afficher un message dans le canvas
     if (data.length === 0) {
-        ctx.font = "12px Sora";
-        ctx.textAlign = "center";
+        ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+        ctx.font = "12px Sora"; ctx.textAlign = "center"; ctx.fillStyle="#64748B";
         ctx.fillText("En attente de données terrain...", ctx.canvas.width/2, ctx.canvas.height/2);
         return;
     }
