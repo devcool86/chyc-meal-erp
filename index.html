@@ -8,7 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="CHYC MEAL">
 <title>CHYC-MEAL ERP Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -24,18 +23,14 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);min-he
 /* HEADER */
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy3));padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 3px 20px rgba(0,0,0,.35)}
 .hdr-left{display:flex;align-items:center;gap:10px}
-.hdr-logo{width:38px;height:38px;border-radius:8px;background:#fff;padding:3px;object-fit:contain}
 .hdr-name{font-size:13px;font-weight:800;color:#fff}
 .hdr-sub{font-size:9px;color:rgba(255,255,255,.6);margin-top:1px}
-.sync-btn{font-size:11px;font-weight:700;padding:7px 14px;border-radius:20px;border:none;background:#334155;color:#fff;cursor:pointer;font-family:'Sora',sans-serif;transition:.2s;white-space:nowrap}
+.sync-btn{font-size:11px;font-weight:700;padding:7px 14px;border-radius:20px;border:none;background:#334155;color:#fff;cursor:pointer;transition:.2s;white-space:nowrap}
 .sync-btn.ok{background:var(--ok)}.sync-btn.err{background:var(--err)}.sync-btn.loading{background:var(--warn)}
 
 /* FILTER BAR */
-.fbar{background:var(--navy2);padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fbar select{background:var(--navy3);color:#fff;border:1.5px solid var(--gold);padding:9px 10px;border-radius:8px;font-size:12px;font-family:'Sora',sans-serif;cursor:pointer;width:100%}
-
-/* SECTOR BANNER */
-.sect-banner{display:none;padding:8px 16px;font-size:12px;font-weight:700;color:#fff;align-items:center;gap:8px}
+.fbar{background:var(--navy2);padding:10px 14px;display:grid;grid-template-columns:1fr;gap:10px}
+.fbar select{background:var(--navy3);color:#fff;border:1.5px solid var(--gold);padding:9px 10px;border-radius:8px;font-size:12px;font-family:'Sora',sans-serif;width:100%}
 
 /* MAIN */
 .main{padding:14px;max-width:960px;margin:0 auto}
@@ -43,254 +38,171 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);min-he
 /* ACTIONS */
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 10px;border-radius:var(--r2);border:none;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;transition:.15s}
-.btn:active{transform:scale(.96)}
 .btn-kobo{background:var(--gold);color:var(--navy)}
 .btn-pdf{background:var(--navy2);color:#fff}
-.btn-3{grid-column:1/-1;background:linear-gradient(135deg,var(--navy),var(--navy3));color:#fff}
 
 /* KPI */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.kpi{background:var(--card);border-radius:var(--r);padding:16px 14px;border-bottom:3px solid #E2E8F0;transition:.2s;box-shadow:0 2px 12px rgba(26,42,94,.07)}
-.kpi.glow{border-bottom-color:var(--gold);box-shadow:0 4px 20px rgba(184,151,42,.18)}
+.kpi{background:var(--card);border-radius:var(--r);padding:16px 14px;border-bottom:3px solid #E2E8F0;box-shadow:0 2px 12px rgba(26,42,94,.07)}
 .kpi-val{font-size:1.5rem;font-weight:800;font-family:'DM Mono',monospace;line-height:1;display:block;margin-bottom:4px}
 .kpi-lbl{font-size:10px;color:#64748B;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 
-/* SECTOR PANEL */
-.sect-panel{display:none;background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:16px;box-shadow:0 2px 12px rgba(26,42,94,.07)}
-.sect-panel h3{font-size:13px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.sect-inds{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.s-ind{border-radius:10px;padding:12px 10px;text-align:center}
-.s-val{font-size:1.1rem;font-weight:800;font-family:'DM Mono',monospace;display:block;margin-bottom:3px}
-.s-lbl{font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-
 /* CHART */
 .chart-card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:14px;box-shadow:0 2px 12px rgba(26,42,94,.07)}
-.chart-title{font-size:12px;font-weight:700;margin-bottom:10px;color:var(--navy)}
-.chart-wrap{height:190px;position:relative}
+.chart-wrap{height:200px;position:relative}
 
 /* TABLE */
-.tbl-card{background:var(--card);border-radius:var(--r);overflow:hidden;margin-bottom:14px;box-shadow:0 2px 12px rgba(26,42,94,.07)}
-.tbl-hdr{background:var(--navy2);display:grid;gap:0}
-.tbl-hdr span{padding:9px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.85)}
-.tbl-row{display:grid;gap:0;border-bottom:1px solid #F1F5F9;transition:.15s}
-.tbl-row:last-child{border-bottom:none}
-.tbl-row:hover{background:#F8FAFF}
+.tbl-card{background:var(--card);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.tbl-hdr{background:var(--navy2);display:grid;grid-template-columns:1.2fr 1fr 0.7fr 0.7fr}
+.tbl-hdr span{padding:9px 10px;font-size:9px;font-weight:700;color:rgba(255,255,255,.85)}
+.tbl-row{display:grid;grid-template-columns:1.2fr 1fr 0.7fr 0.7fr;border-bottom:1px solid #F1F5F9}
 .tbl-row span{padding:10px 10px;font-size:11px;color:var(--navy)}
-.tbl-row span b{font-weight:700;display:block}
-.tbl-row span small{font-size:9px;color:#94A3B8;margin-top:2px;display:block}
-.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700}
-.b-ok{background:#D1FAE5;color:#065F46}.b-warn{background:#FEF3C7;color:#92400E}.b-info{background:#EEF2FA;color:var(--navy2)}
-
-/* EMPTY */
-.empty{text-align:center;padding:40px 20px;color:#94A3B8}
-.empty-i{font-size:2.5rem;margin-bottom:10px}
-.empty-t{font-size:14px;font-weight:600;margin-bottom:5px}
-.empty-s{font-size:12px}
-
-/* ALERT */
-.alert{display:flex;gap:8px;padding:10px 14px;border-radius:var(--r2);font-size:12px;margin-bottom:12px;border-left:3px solid}
-.a-info{background:rgba(14,42,94,.06);border-color:var(--navy);color:var(--navy)}
-.a-ok{background:#D1FAE5;border-color:var(--ok);color:#065F46}
-.a-err{background:#FEE2E2;border-color:var(--err);color:#991B1B}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="hdr">
   <div class="hdr-left">
-    <img src="data:image/png;base64,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" class="hdr-logo" alt="CHYC">
+    <div style="background:white; color:#0F1B42; padding:5px; border-radius:5px; font-weight:900;">CHYC</div>
     <div>
       <div class="hdr-name">CHYC CONSULTING</div>
-      <div class="hdr-sub">MEAL ERP Pro · Saint-Louis</div>
+      <div class="hdr-sub">MEAL ERP Pro · Dashboard Live</div>
     </div>
   </div>
   <button class="sync-btn" id="syncBtn" onclick="fetchData()">🔄 SYNC</button>
 </header>
 
-<!-- FILTRES -->
 <div class="fbar">
-  <select id="fProj" onchange="render()">
-    <option value="ALL">🏢 Tous les projets</option>
-  </select>
   <select id="fSect" onchange="render()">
     <option value="ALL">📂 Tous les secteurs</option>
     <option value="sante">🏥 Santé</option>
     <option value="agriculture">🌾 Agriculture</option>
-    <option value="microfinance">💰 Microfinance / AGR</option>
-    <option value="education">📚 Éducation / Formation</option>
-    <option value="wash">🚰 Eau & Assainissement (WASH)</option>
-    <option value="protection">🛡️ Protection & Genre</option>
-    <option value="logistique">📦 Logistique / Distribution</option>
+    <option value="microfinance">💰 Microfinance</option>
+    <option value="protection">🛡️ Protection</option>
   </select>
 </div>
 
-<!-- SECT BANNER -->
-<div class="sect-banner" id="sectBanner"></div>
-
-<!-- MAIN CONTENT -->
-<div class="main" id="reportArea">
-
-  <!-- ACTIONS -->
+<div class="main">
   <div class="actions">
-    <a href="https://ee.kobotoolbox.org/x/aTta3p1L" target="_blank" class="btn btn-kobo">➕ Nouvelle collecte</a>
-    <button onclick="exportPDF()" class="btn btn-pdf">📄 Rapport PDF</button>
+    <a href="https://ee.kobotoolbox.org/x/aL4EkYb8XAiZW5oTHBbCFK" target="_blank" class="btn btn-kobo">➕ Nouvelle collecte</a>
+    <button onclick="window.print()" class="btn btn-pdf">📄 Rapport PDF</button>
   </div>
 
-  <!-- STATUS ALERT -->
-  <div id="alertZone"></div>
-
-  <!-- KPI CARDS -->
   <div class="kpi-grid">
-    <div class="kpi" id="kBen"><span class="kpi-val" id="vBen" style="color:var(--navy2)">—</span><span class="kpi-lbl">👥 Bénéficiaires</span></div>
-    <div class="kpi" id="kGen"><span class="kpi-val" id="vGen" style="color:#DB2777">—</span><span class="kpi-lbl">♀ Part femmes</span></div>
-    <div class="kpi" id="kCash"><span class="kpi-val" id="vCash" style="color:var(--ok)">—</span><span class="kpi-lbl">💵 Dépenses FCFA</span></div>
-    <div class="kpi" id="kAct"><span class="kpi-val" id="vAct" style="color:var(--gold)">—</span><span class="kpi-lbl">📋 Missions</span></div>
+    <div class="kpi"><span class="kpi-val" id="vBen" style="color:var(--navy2)">0</span><span class="kpi-lbl">👥 Bénéficiaires</span></div>
+    <div class="kpi"><span class="kpi-val" id="vGen" style="color:#DB2777">0%</span><span class="kpi-lbl">♀ Part femmes</span></div>
+    <div class="kpi"><span class="kpi-val" id="vCash" style="color:var(--ok)">0 F</span><span class="kpi-lbl">💵 Dépenses</span></div>
+    <div class="kpi"><span class="kpi-val" id="vAct" style="color:var(--gold)">0</span><span class="kpi-lbl">📋 Missions</span></div>
   </div>
 
-  <!-- SECTOR INDICATORS PANEL -->
-  <div class="sect-panel" id="sectPanel">
-    <h3 id="sectPanelTitle"></h3>
-    <div class="sect-inds" id="sectInds"></div>
-  </div>
-
-  <!-- CHART -->
   <div class="chart-card">
-    <div class="chart-title" id="chartTitle">📊 Répartition par secteur</div>
     <div class="chart-wrap"><canvas id="myChart"></canvas></div>
   </div>
 
-  <!-- TABLE -->
   <div class="tbl-card">
-    <div class="tbl-hdr" id="tblHead" style="grid-template-columns:1.2fr 1fr 0.7fr 0.7fr">
-      <span>Agent · Date</span><span>Zone · Secteur</span><span>Bénéf.</span><span>Dépense</span>
-    </div>
+    <div class="tbl-hdr"><span>Agent</span><span>Secteur</span><span>Bénéf.</span><span>Dépense</span></div>
     <div id="tblBody"></div>
   </div>
-
 </div>
 
 <script>
-// ══ CONFIG ══
-const ASSET_ID = 'anJWsYbZiGvWEz3ZjmwcqY';
-const PROXY    = 'https://api.allorigins.win/get?url=';
-let   rawData  = [];
-let   myChart  = null;
+// ══ CONFIGURATION AUTOMATISÉE ══
+const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK'; 
+const API_TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd';
 
-const SECT = {
-  sante:       { icon:'🏥', label:'Santé',               color:'#6E8CB5', bg:'#EEF4FF',
-    inds:[{k:'nb_consultations',l:'Consultations'},{k:'nb_enfants_vaccines',l:'Enfants vaccinés'},
-          {k:'nb_femmes_CPN',l:'Femmes CPN'},{k:'nb_accouchements',l:'Accouchements'},
-          {k:'nb_cas_malnutrition',l:'Cas malnutrition'},{k:'taux_guerison',l:'Taux guérison %',avg:true}]},
-  agriculture: { icon:'🌾', label:'Agriculture',          color:'#4CAF8A', bg:'#EDFAF4',
-    inds:[{k:'nb_agriculteurs_touches',l:'Agriculteurs touchés'},{k:'superficie_ha',l:'Superficie (ha)',dec:true},
-          {k:'production_totale_kg',l:'Production (kg)',dec:true},{k:'nb_intrants_distribues',l:'Intrants distribués'}]},
-  microfinance:{ icon:'💰', label:'Microfinance',         color:'#B8972A', bg:'#FEF7E8',
-    inds:[{k:'nb_beneficiaires_credit',l:'Bénéf. crédit'},{k:'montant_credit_octroye',l:'Crédit octroyé FCFA',dec:true},
-          {k:'taux_remboursement',l:'Taux remboursement %',avg:true},{k:'montant_epargne_collecte',l:'Épargne FCFA',dec:true},
-          {k:'nb_groupes_solidarite',l:'Groupes solidarité'},{k:'nb_AGR_soutenues',l:'AGR soutenues'}]},
-  education:   { icon:'📚', label:'Éducation',            color:'#1A2A5E', bg:'#EEF2FA',
-    inds:[{k:'nb_apprenants_h',l:'Apprenants H'},{k:'nb_apprenants_f',l:'Apprenants F'},
-          {k:'nb_heures_formation',l:'Heures formation'},{k:'taux_presence',l:'Taux présence %',avg:true},
-          {k:'taux_reussite',l:'Taux réussite %',avg:true}]},
-  wash:        { icon:'🚰', label:'WASH',                 color:'#29B6D8', bg:'#EBF9FD',
-    inds:[{k:'nb_menages_acces_eau',l:'Ménages eau potable'},{k:'nb_latrines_construites',l:'Latrines construites'},
-          {k:'nb_points_eau',l:"Points d'eau"},{k:'nb_sensibilises_hygiene',l:'Sensibilisés hygiène'}]},
-  protection:  { icon:'🛡️', label:'Protection & Genre',   color:'#E26B60', bg:'#FFF0EF',
-    inds:[{k:'nb_cas_VBG_documentes',l:'Cas VBG documentés'},{k:'nb_cas_references',l:'Cas référés'},
-          {k:'nb_enfants_proteges',l:'Enfants protégés'}]},
-  logistique:  { icon:'📦', label:'Logistique',           color:'#9B59B6', bg:'#F5EFFE',
-    inds:[{k:'nb_kits_distribues',l:'Kits distribués'},{k:'stock_initial',l:'Stock initial',dec:true},
-          {k:'stock_final',l:'Stock final',dec:true},{k:'consommation',l:'Consommation',dec:true}]}
-};
+let rawData = [];
+let myChart = null;
 
-const CHART_COLORS = ['#0F1B42','#B8972A','#6E8CB5','#10B981','#29B6D8','#E26B60','#9B59B6','#4CAF8A','#F59E0B'];
-
-// ══ FETCH ══
 async function fetchData() {
-  const btn = document.getElementById('syncBtn');
-  btn.textContent = '⌛ Chargement...';
-  btn.className = 'sync-btn loading';
+    const btn = document.getElementById('syncBtn');
+    btn.textContent = '⌛ Connexion...';
+    btn.className = 'sync-btn loading';
 
-  const apiURL = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
-
-  try {
-    const resp = await fetch(PROXY + encodeURIComponent(apiURL) + '&t=' + Date.now());
-    const outer = await resp.json();
-    const data = JSON.parse(outer.contents);
-
-    if (!data.results) throw new Error('Pas de résultats dans la réponse');
-
-    rawData = data.results;
-    btn.textContent = '✅ ' + rawData.length + ' missions';
-    btn.className = 'sync-btn ok';
-    buildProjectFilter();
-    render();
-    showAlert('ok', '✅ ' + rawData.length + ' soumissions chargées avec succès');
-
-  } catch(e) {
-    btn.textContent = '❌ Erreur';
-    btn.className = 'sync-btn err';
-    showAlert('err', '❌ Impossible de charger les données. Vérifiez votre connexion internet.');
-    console.error('Fetch error:', e);
-    // Show demo if no data
-    if (rawData.length === 0) loadDemo();
-  }
+    const url = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+    
+    try {
+        const response = await fetch(url, {
+            headers: { 'Authorization': `Token ${API_TOKEN}` }
+        });
+        
+        if (!response.ok) throw new Error('Erreur de connexion');
+        
+        const data = await response.json();
+        rawData = data.results;
+        
+        btn.textContent = '✅ ' + rawData.length + ' entrées';
+        btn.className = 'sync-btn ok';
+        render();
+    } catch (error) {
+        console.error(error);
+        btn.textContent = '❌ Erreur';
+        btn.className = 'sync-btn err';
+        alert("Erreur : Vérifiez que le formulaire est DÉPLOYÉ sur Kobo.");
+    }
 }
 
-// ══ BUILD PROJECT FILTER ══
-function buildProjectFilter() {
-  const sel = document.getElementById('fProj');
-  const projNames = {
-    P001:'Marchands Tabliers', P002:'Formation Numérique',
-    P003:'Microfinance Saint-Louis', P004:'Santé Communautaire', P005:'Agropastoral Vallée'
-  };
-  const projs = [...new Set(rawData.map(r => r.code_projet).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="ALL">🏢 Tous les projets</option>';
-  projs.forEach(p => {
-    const name = projNames[p] || p;
-    sel.innerHTML += `<option value="${p}">${p} — ${name}</option>`;
-  });
-}
-
-// ══ MAIN RENDER ══
 function render() {
-  const projFilter = document.getElementById('fProj').value;
-  const sectFilter = document.getElementById('fSect').value.toLowerCase().trim();
+    const sFilter = document.getElementById('fSect').value;
+    const data = sFilter === 'ALL' ? rawData : rawData.filter(r => r.secteur_projet === sFilter);
 
-  // ── Filter data ──
-  const data = rawData.filter(r => {
-    const matchP = projFilter === 'ALL' || (r.code_projet||'') === projFilter;
-    const matchS = sectFilter === 'all' || (r.secteur_projet||'').toLowerCase().trim() === sectFilter;
-    return matchP && matchS;
-  });
+    let benH=0, benF=0, cash=0;
+    const tbody = document.getElementById('tblBody');
+    tbody.innerHTML = '';
 
-  const cfg = SECT[sectFilter] || null;
+    data.forEach(r => {
+        const bh = Number(r.nb_beneficiaires_h || 0);
+        const bf = Number(r.nb_beneficiaires_f || 0);
+        const mnt = Number(r.montant_depense || 0);
+        
+        benH += bh;
+        benF += bf;
+        cash += mnt;
 
-  // ── Global KPIs ──
-  let benH=0, benF=0, cash=0;
-  data.forEach(r => {
-    benH += Number(r.nb_beneficiaires_h || 0);
-    benF += Number(r.nb_beneficiaires_f || 0);
-    cash += Number(r.montant_depense    || 0);
-  });
-  const benT = benH + benF;
+        tbody.innerHTML += `
+            <div class="tbl-row">
+                <span>${r.nom_agent || 'Anonyme'}</span>
+                <span>${r.secteur_projet || '-'}</span>
+                <span>${bh + bf}</span>
+                <span>${mnt.toLocaleString()} F</span>
+            </div>`;
+    });
 
-  document.getElementById('vBen').textContent  = benT.toLocaleString('fr-FR');
-  document.getElementById('vGen').textContent  = benT > 0 ? Math.round(benF/benT*100)+'%' : '—';
-  document.getElementById('vCash').textContent = Math.round(cash).toLocaleString('fr-FR') + ' F';
-  document.getElementById('vAct').textContent  = data.length;
+    const total = benH + benF;
+    document.getElementById('vBen').textContent = total.toLocaleString();
+    document.getElementById('vGen').textContent = total > 0 ? Math.round((benF/total)*100) + '%' : '0%';
+    document.getElementById('vCash').textContent = cash.toLocaleString() + ' F';
+    document.getElementById('vAct').textContent = data.length;
 
-  // ── KPI glow ──
-  ['kBen','kGen','kCash','kAct'].forEach(id => document.getElementById(id).classList.remove('glow'));
-  if (cfg) {
-    document.getElementById('kBen').classList.add('glow');
-    document.getElementById('kAct').classList.add('glow');
-  }
+    updateChart(data);
+}
 
-  // ── Sector banner ──
-  const banner = document.getElementById('sectBanner');
-  if (cfg) {
-    banner.style.display = 'flex';
-    banner.style.background = cfg.color;
-    banner.innerHTML = `${cfg.icon} Filtre actif : <strong>${cfg.label}</strong> &nbsp;|&nbsp; ${data.length} mission(s) af
+function updateChart(data) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const counts = {};
+    data.forEach(r => { 
+        const s = r.secteur_projet || 'Non défini';
+        counts[s] = (counts[s] || 0) + 1; 
+    });
+
+    if (myChart) myChart.destroy();
+    myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(counts),
+            datasets: [{
+                data: Object.values(counts),
+                backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#EF4444', '#6E8CB5']
+            }]
+        },
+        options: { 
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+        }
+    });
+}
+
+// Lancement automatique au chargement
+window.onload = fetchData;
+</script>
+</body>
+</html>
