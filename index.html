@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CHYC-MEAL Intelligence v2.5</title>
+<title>CHYC-MEAL ERP v2.5 FINAL</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;}
+:root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;--err:#EF4444;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100}
+.hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px}
 .sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;font-size:11px}
 .filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-select{background:rgba(255,255,255,0.15);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:11px;outline:none}
+select{background:rgba(255,255,255,0.15);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:11px;outline:none;width:100%}
 .main{padding:15px;max-width:1100px;margin:0 auto}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--card);padding:18px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);border-left:5px solid var(--gold)}
@@ -29,8 +30,8 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
 
 <header class="hdr">
   <div style="display:flex;align-items:center;gap:10px">
-    <div style="background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;">CHYC</div>
-    <div style="font-weight:800;font-size:14px">CONSULTING <span style="font-size:9px;display:block;opacity:0.8">MEAL Intelligence</span></div>
+    <div class="hdr-logo-box">CHYC</div>
+    <div><div style="font-weight:800;font-size:14px">CONSULTING</div><div style="font-size:9px;opacity:0.8">MEAL Intelligence</div></div>
   </div>
   <button class="sync-btn" id="syncBtn" onclick="fetchData()">🔄 ACTUALISER</button>
 </header>
@@ -42,19 +43,19 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
 
 <div class="main">
   <div class="kpi-grid">
-    <div class="kpi-card"><span class="kpi-label">Bénéficiaires (Total)</span><span class="kpi-val" id="vTotal">0</span></div>
+    <div class="kpi-card"><span class="kpi-label">Bénéficiaires</span><span class="kpi-val" id="vTotal">0</span></div>
     <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Distribués</span><span class="kpi-val" id="vKits">0</span></div>
     <div class="kpi-card" style="border-left-color:#DB2777"><span class="kpi-label">% Femmes</span><span class="kpi-val" id="vFemmes">0%</span></div>
-    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Budget Exécuté</span><span class="kpi-val" id="vBudget">0</span></div>
+    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Dépenses (XOF)</span><span class="kpi-val" id="vBudget">0</span></div>
   </div>
 
   <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 IMPACT PAR SECTEUR</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 RÉPARTITION</div>
         <div style="height:220px"><canvas id="sectorChart"></canvas></div>
     </div>
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 DERNIÈRES MISSIONS</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 RÉSUMÉ TERRAIN</div>
         <div style="overflow-x:auto">
           <table>
             <thead><tr><th>Date</th><th>Agent</th><th>Impact</th></tr></thead>
@@ -73,7 +74,7 @@ let myChart = null;
 
 async function fetchData() {
     const btn = document.getElementById('syncBtn');
-    btn.textContent = '⌛ Connexion...';
+    btn.textContent = '⌛ Synchronisation...';
     const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
     try {
         const resp = await fetch(PROXY + encodeURIComponent(targetUrl) + '&t=' + Date.now());
@@ -81,11 +82,11 @@ async function fetchData() {
         const content = JSON.parse(json.contents);
         if (content.results) {
             rawData = content.results;
-            btn.textContent = '✅ ' + rawData.length + ' MISSIONS';
+            btn.textContent = '✅ ' + rawData.length + ' FORMULAIRES';
             updateFilters();
             render();
         }
-    } catch (e) { btn.textContent = '❌ Erreur'; }
+    } catch (e) { btn.textContent = '❌ Erreur de lien'; }
 }
 
 function updateFilters() {
@@ -93,9 +94,11 @@ function updateFilters() {
     const sects = [...new Set(rawData.map(r => r.secteur_projet))].filter(Boolean);
     const pSel = document.getElementById('fProj');
     const sSel = document.getElementById('fSect');
+    
     pSel.innerHTML = '<option value="ALL">📂 TOUS LES PROJETS</option>';
-    sSel.innerHTML = '<option value="ALL">🎯 TOUS LES SECTEURS</option>';
     projs.forEach(p => pSel.innerHTML += `<option value="${p}">${p}</option>`);
+    
+    sSel.innerHTML = '<option value="ALL">🎯 TOUS LES SECTEURS</option>';
     sects.forEach(s => sSel.innerHTML += `<option value="${s}">${s}</option>`);
 }
 
@@ -104,30 +107,31 @@ function render() {
     const sF = document.getElementById('fSect').value;
     const filtered = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF));
 
-    let bH=0, bF=0, kits=0, cash=0;
+    let bH=0, bF=0, kits=0, budget=0;
     const tbody = document.getElementById('tblBody');
     tbody.innerHTML = '';
 
     filtered.forEach(r => {
-        // CORRECTION : Addition de tous les champs bénéficiaires du formulaire XLS
-        const h = Number(r.nb_beneficiaires_h || 0) + Number(r.nb_consultations_h || 0) + Number(r.nb_agri_h || 0) + Number(r.nb_membres_h || 0);
-        const f = Number(r.nb_beneficiaires_f || 0) + Number(r.nb_consultations_f || 0) + Number(r.nb_agri_f || 0) + Number(r.nb_membres_f || 0);
+        // SOMME INTELLIGENTE : Additionne tous les champs de bénéficiaires possibles dans votre formulaire
+        const h = Number(r.nb_beneficiaires_h || r.nb_consultations_h || r.nb_agri_h || r.nb_membres_h || 0);
+        const f = Number(r.nb_beneficiaires_f || r.nb_consultations_f || r.nb_agri_f || r.nb_membres_f || 0);
         
         bH += h; bF += f;
         kits += Number(r.nb_kits_distribues || 0);
-        cash += Number(r.montant_depense || 0);
+        budget += Number(r.montant_depense || 0);
 
         tbody.innerHTML += `<tr>
             <td>${(r.date_mission || '').split('T')[0]}</td>
-            <td>${r.nom_agent || '-'}</td>
-            <td><b>${h+f}</b></td>
+            <td><b>${r.nom_agent || '-'}</b></td>
+            <td>${h+f} pers.</td>
         </tr>`;
     });
 
-    document.getElementById('vTotal').textContent = (bH+bF).toLocaleString();
+    const total = bH + bF;
+    document.getElementById('vTotal').textContent = total.toLocaleString();
     document.getElementById('vKits').textContent = kits.toLocaleString();
-    document.getElementById('vBudget').textContent = cash.toLocaleString() + ' F';
-    document.getElementById('vFemmes').textContent = (bH+bF) > 0 ? Math.round((bF/(bH+bF))*100)+'%' : '0%';
+    document.getElementById('vBudget').textContent = budget.toLocaleString();
+    document.getElementById('vFemmes').textContent = total > 0 ? Math.round((bF/total)*100)+'%' : '0%';
     updateChart(filtered);
 }
 
@@ -145,7 +149,6 @@ function updateChart(data) {
         options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 }
-
 window.onload = fetchData;
 </script>
 </body>
