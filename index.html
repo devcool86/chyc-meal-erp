@@ -1,192 +1,198 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CHYC-MEAL ERP v3.8</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
-.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
-.btn-group{display:flex;gap:5px}
-.action-btn{border:none;padding:10px 12px;border-radius:25px;font-weight:700;cursor:pointer;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;color:#fff}
-.btn-sync{background:var(--gold);color:var(--navy)}
-.btn-pdf{background:#6E8CB5}
-.btn-kobo{background:var(--ok)}
-.filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-select{background:rgba(255,255,255,0.15);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:11px;width:100%;outline:none}
-.main{padding:15px;max-width:1100px;margin:0 auto}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;margin-bottom:20px}
-.kpi-card{background:var(--card);padding:15px;border-radius:15px;border-left:5px solid var(--gold);box-shadow:0 4px 15px rgba(0,0,0,0.05)}
-.kpi-label{font-size:9px;color:#64748B;text-transform:uppercase;font-weight:700;margin-bottom:5px;display:block}
-.kpi-val{font-size:18px;font-weight:800}
-.glass-card{background:var(--card);border-radius:15px;padding:15px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.05)}
-table{width:100%;border-collapse:collapse;font-size:10px}
-th{text-align:left;padding:8px;background:#F8FAFC;color:#64748B}
-td{padding:10px;border-bottom:1px solid #F1F5F9}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>CHYC-MEAL v9.1 | Dashboard Live</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --navy: #0F1B42; --gold: #B8972A; --bg: #F4F7FE; --ok: #10B981; --err: #EF4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
+
+        header { background: var(--navy); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,.3); }
+        .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: .85rem; }
+        #sync-status { font-size: .7rem; cursor: pointer; padding: 6px 14px; border-radius: 20px; background: #64748B; color: white; font-weight: 700; border: none; }
+        .status-ok  { background: var(--ok)  !important; }
+        .status-err { background: var(--err) !important; }
+
+        .filter-bar { background: #1A2A5E; padding: 10px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px 8px; border-radius: 8px; font-size: .75rem; width: 100%; appearance: auto; cursor: pointer; }
+
+        .sect-banner { display: none; padding: 10px 14px; font-size: .75rem; font-weight: 700; color: #fff; align-items: center; gap: 8px; }
+
+        .container { padding: 14px; max-width: 900px; margin: 0 auto; }
+        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: .75rem; text-decoration: none; cursor: pointer; color: white; }
+        .btn-pdf  { background: #334155; }
+        .btn-kobo { background: var(--gold); color: var(--navy); }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 16px; }
+        .kpi-card { background: #fff; padding: 16px; border-radius: 14px; border-bottom: 4px solid #E2E8F0; }
+        .active-kpi { border-bottom-color: var(--gold) !important; box-shadow: 0 4px 16px rgba(184,151,42,.2); }
+        .kpi-val { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+        .kpi-lbl { font-size: .6rem; color: #64748B; font-weight: 600; text-transform: uppercase; }
+
+        .sect-panel { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 14px; border-left: 4px solid var(--gold); display: none; }
+        .sect-indicators { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+        .s-ind { background: #F4F7FE; border-radius: 10px; padding: 12px 10px; text-align: center; }
+        .s-ind .s-val { font-size: 1.1rem; font-weight: 800; }
+
+        .card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+        .table-card { background: #fff; border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+        table { width: 100%; border-collapse: collapse; font-size: .72rem; }
+        th { background: var(--navy); color: #fff; padding: 10px; text-align: left; font-size: .6rem; }
+        td { padding: 10px; border-bottom: 1px solid #F1F5F9; }
+    </style>
 </head>
 <body>
 
-<header class="hdr">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div style="background:#fff;color:var(--navy);padding:4px 8px;border-radius:5px;font-weight:900">CHYC</div>
-    <div style="line-height:1.1">
-        <div style="font-weight:800;font-size:12px">CONSULTING</div>
-        <div style="font-size:8px;opacity:0.8">MEAL Intelligence</div>
+<header>
+    <div style="display:flex;align-items:center;gap:10px">
+        <div class="logo-box">CHYC</div>
+        <div style="font-weight:800;font-size:.85rem">MEAL v9.1</div>
     </div>
-  </div>
-  <div class="btn-group">
-    <button class="action-btn btn-sync" id="syncBtn" onclick="fetchData()">🔄 MAJ</button>
-    <button class="action-btn btn-pdf" onclick="exportToPDF()">📄 PDF</button>
-    <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="action-btn btn-kobo">➕ SAISIE</a>
-  </div>
+    <button id="sync-status" onclick="fetchData()">🔄 ACTUALISER</button>
 </header>
 
-<div class="filter-section">
-  <select id="fProj" onchange="render()">
-    <option value="ALL">📂 TOUS LES PROJETS</option>
-    <option value="P001">P001 - Marchands Tabliers</option>
-    <option value="P002">P002 - Formation Numérique</option>
-    <option value="P003">P003 - Microfinance</option>
-    <option value="P004">P004 - Santé</option>
-    <option value="P005">P005 - Agropastoral</option>
-  </select>
-  <select id="fSect" onchange="render()">
-    <option value="ALL">🎯 TOUS LES SECTEURS</option>
-    <option value="sante">Santé</option>
-    <option value="agriculture">Agriculture</option>
-    <option value="microfinance">Microfinance</option>
-    <option value="education">Éducation</option>
-    <option value="wash">WASH</option>
-    <option value="protection">Protection</option>
-  </select>
+<div class="filter-bar">
+    <select id="f-proj" onchange="render()"><option value="ALL">🏢 PROJETS (TOUS)</option></select>
+    <select id="f-sect" onchange="render()">
+        <option value="ALL">📂 SECTEURS (TOUS)</option>
+        <option value="sante">🏥 Santé</option>
+        <option value="agriculture">🌾 Agriculture</option>
+        <option value="microfinance">💰 Microfinance / AGR</option>
+        <option value="education">📚 Éducation / Formation</option>
+        <option value="wash">🚰 Eau & Assainissement</option>
+        <option value="protection">🛡️ Protection & Genre</option>
+        <option value="logistique">📦 Logistique / Distribution</option>
+    </select>
 </div>
 
-<div class="main" id="reportContent">
-  <div class="kpi-grid">
-    <div class="kpi-card"><span class="kpi-label">Bénéficiaires</span><span class="kpi-val" id="vTotal">0</span></div>
-    <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Livrés</span><span class="kpi-val" id="vKits">0</span></div>
-    <div class="kpi-card" style="border-left-color:#DB2777"><span class="kpi-label">% Femmes</span><span class="kpi-val" id="vFemmes">0%</span></div>
-    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Dépenses XOF</span><span class="kpi-val" id="vBudget">0</span></div>
-  </div>
+<div class="sect-banner" id="sect-banner"></div>
 
-  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:15px;">
-    <div class="glass-card">
-        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📊 RÉPARTITION SECTEURS</div>
-        <div style="height:200px"><canvas id="sectorChart"></canvas></div>
+<div class="container" id="report-area">
+    <div class="action-row">
+        <a href="https://ee.kobotoolbox.org/x/aTta3p1L" target="_blank" class="btn btn-kobo">➕ COLLECTE KOBO</a>
+        <button onclick="exportPDF()" class="btn btn-pdf">📄 RAPPORT PDF</button>
     </div>
-    <div class="glass-card">
-        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📋 JOURNAL DE BORD</div>
-        <div style="overflow-x:auto">
-          <table>
-            <thead><tr><th>Date</th><th>Agent / Zone</th><th>Impact</th></tr></thead>
-            <tbody id="tblBody"></tbody>
-          </table>
-        </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card" id="kpi-ben"><span class="kpi-val" id="v-ben">0</span><span class="kpi-lbl">BÉNÉFICIAIRES</span></div>
+        <div class="kpi-card" id="kpi-gen"><span class="kpi-val" id="v-gen" style="color:#DB2777">0%</span><span class="kpi-lbl">♀ FEMMES</span></div>
+        <div class="kpi-card" id="kpi-cash"><span class="kpi-val" id="v-cash" style="color:#059669">0 F</span><span class="kpi-lbl">DÉPENSES</span></div>
+        <div class="kpi-card" id="kpi-act"><span class="kpi-val" id="v-act">0</span><span class="kpi-lbl">MISSIONS</span></div>
     </div>
-  </div>
+
+    <div class="sect-panel" id="sect-panel">
+        <h3 id="sect-panel-title" style="font-size:0.8rem; margin-bottom:10px;">🎯 Indicateurs Sectoriels</h3>
+        <div class="sect-indicators" id="sect-indicators"></div>
+    </div>
+
+    <div class="card">
+        <div id="chart-title" style="font-size:0.75rem; font-weight:700; margin-bottom:10px;">📊 Répartition</div>
+        <div style="height:180px"><canvas id="myChart"></canvas></div>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead><tr id="table-head"><th>Date · Agent</th><th>Zone · Secteur</th><th>Bénéf.</th><th>Dépense</th></tr></thead>
+            <tbody id="v-table"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK'; 
-const TOKEN = '421c81d9ac9d00f49953d2e903d8080ab9b274bd'; 
-
+const ASSET_ID = 'anJWsYbZiGvWEz3ZjmwcqY';
 let rawData = [];
-let myChart = null;
+let chart = null;
+
+const SECT_CONFIG = {
+    sante: { label: '🏥 Santé', color: '#6E8CB5', bgColor: '#EEF4FF', indicators: [{ key: 'nb_consultations', label: 'Consultations' }, { key: 'nb_enfants_vaccines', label: 'Vaccinés' }] },
+    agriculture: { label: '🌾 Agriculture', color: '#4CAF8A', bgColor: '#EDFAF4', indicators: [{ key: 'nb_agriculteurs_touches', label: 'Agriculteurs' }, { key: 'superficie_ha', label: 'Hectares', dec: true }] },
+    microfinance: { label: '💰 Microfinance', color: '#B8972A', bgColor: '#FEF7E8', indicators: [{ key: 'nb_beneficiaires_credit', label: 'Bénéf. Crédit' }, { key: 'montant_credit_octroye', label: 'Crédit octroyé', dec: true }] },
+    education: { label: '📚 Éducation', color: '#1A2A5E', bgColor: '#EEF2FA', indicators: [{ key: 'nb_apprenants_h', label: 'Apprenants H' }, { key: 'nb_apprenants_f', label: 'Apprenants F' }] },
+    wash: { label: '🚰 WASH', color: '#29B6D8', bgColor: '#EBF9FD', indicators: [{ key: 'nb_menages_acces_eau', label: 'Ménages Eau' }, { key: 'nb_points_eau', label: 'Points d\'eau' }] },
+    protection: { label: '🛡️ Protection', color: '#E26B60', bgColor: '#FFF0EF', indicators: [{ key: 'nb_cas_VBG_documentes', label: 'Cas VBG' }, { key: 'nb_cas_references', label: 'Cas Référés' }] },
+    logistique: { label: '📦 Logistique', color: '#9B59B6', bgColor: '#F5EFFE', indicators: [{ key: 'nb_kits_distribues', label: 'Kits' }, { key: 'stock_final', label: 'Stock Final' }] }
+};
 
 async function fetchData() {
-    const btn = document.getElementById('syncBtn');
-    btn.innerHTML = '⏳...';
-    const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
-    
+    const st = document.getElementById('sync-status');
+    st.innerText = '⌛ SYNC...';
     try {
-        const response = await fetch(targetUrl, {
-            method: 'GET',
-            headers: { 'Authorization': `Token ${TOKEN}` }
-        });
-        const content = await response.json();
+        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kf.kobotoolbox.org/api/v2/assets/'+ASSET_ID+'/data.json')}&t=${Date.now()}`);
+        const d = await r.json();
+        const content = JSON.parse(d.contents);
         if (content.results) {
             rawData = content.results;
-            btn.innerHTML = '✅ ' + rawData.length;
+            st.innerText = `✅ ${rawData.length} ENTRÉES`;
+            st.className = 'status-ok';
+            initProjectFilter();
             render();
         }
-    } catch (e) { btn.innerHTML = '❌ Erreur'; }
+    } catch (e) { st.innerText = '❌ ERREUR'; st.className = 'status-err'; }
+}
+
+function initProjectFilter() {
+    const pS = document.getElementById('f-proj');
+    const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean).sort();
+    pS.innerHTML = '<option value="ALL">🏢 PROJETS (TOUS)</option>';
+    projs.forEach(p => pS.innerHTML += `<option value="${p}">${p}</option>`);
 }
 
 function render() {
-    const pF = document.getElementById('fProj').value;
-    const sF = document.getElementById('fSect').value;
+    const pF = document.getElementById('f-proj').value;
+    const sF = document.getElementById('f-sect').value.toLowerCase().trim();
+    const data = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'all' || (r.secteur_projet||'').toLowerCase().trim() === sF));
+
+    let benH=0, benF=0, cash=0;
+    data.forEach(r => { benH += parseInt(r.nb_beneficiaires_h||0); benF += parseInt(r.nb_beneficiaires_f||0); cash += parseFloat(r.montant_depense||0); });
     
-    const filtered = rawData.filter(r => {
-        const matchP = (pF === 'ALL' || (r.code_projet || '').includes(pF));
-        const matchS = (sF === 'ALL' || (r.secteur_projet || '').includes(sF));
-        return matchP && matchS;
-    });
+    document.getElementById('v-ben').innerText = (benH+benF).toLocaleString();
+    document.getElementById('v-gen').innerText = (benH+benF) > 0 ? Math.round((benF/(benH+benF))*100)+'%' : '0%';
+    document.getElementById('v-cash').innerText = Math.round(cash).toLocaleString() + ' F';
+    document.getElementById('v-act').innerText = data.length;
 
-    let bT=0, bF=0, k=0, b=0;
-    const tbody = document.getElementById('tblBody');
-    tbody.innerHTML = '';
+    const banner = document.getElementById('sect-banner');
+    const panel = document.getElementById('sect-panel');
+    const cfg = SECT_CONFIG[sF];
 
-    filtered.forEach((r, idx) => {
-        // Tentative de lecture multiple pour trouver les données peu importe le nom de la colonne
-        const valH = parseInt(r.nb_beneficiaires_h || r.hommes || 0);
-        const valF = parseInt(r.nb_beneficiaires_f || r.femmes || 0);
-        const valK = parseInt(r.nb_kits_distribues || r.kits || 0);
-        const valB = parseFloat(r.montant_depense || r.budget || 0);
+    if (sF !== 'all' && cfg) {
+        banner.style.display = 'flex'; banner.style.background = cfg.color;
+        banner.innerHTML = `Filtre : <strong>${cfg.label}</strong> — ${data.length} missions`;
+        panel.style.display = 'block';
+        document.getElementById('sect-indicators').innerHTML = cfg.indicators.map(ind => {
+            let val = data.reduce((a,r) => a + parseFloat(r[ind.key]||0), 0);
+            return `<div class="s-ind" style="background:${cfg.bgColor}"><div class="s-val" style="color:${cfg.color}">${val.toLocaleString()}</div><div class="s-lbl">${ind.label}</div></div>`;
+        }).join('');
+    } else { banner.style.display = 'none'; panel.style.display = 'none'; }
 
-        bT += (valH + valF); 
-        bF += valF;
-        k += valK;
-        b += valB;
-
-        if(idx < 6) {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${(r.date_mission || r._submission_time || '').split('T')[0]}</td>
-                    <td><b>${r.nom_agent || 'Agent'}</b><br>${r.zone_intervention || '-'}</td>
-                    <td>${valH + valF} Pers.</td>
-                </tr>`;
-        }
-    });
-
-    document.getElementById('vTotal').textContent = bT.toLocaleString();
-    document.getElementById('vKits').textContent = k.toLocaleString();
-    document.getElementById('vBudget').textContent = b.toLocaleString() + ' F';
-    document.getElementById('vFemmes').textContent = bT > 0 ? Math.round((bF/bT)*100)+'%' : '0%';
-    
-    updateChart(filtered);
+    updateChart(data, sF);
+    renderTable(data);
 }
 
-function updateChart(data) {
-    const ctx = document.getElementById('sectorChart').getContext('2d');
-    const s = {}; 
-    data.forEach(r => { 
-        const v = r.secteur_projet || 'Autre'; 
-        s[v] = (s[v] || 0) + 1; 
-    });
-    if (myChart) myChart.destroy();
-    myChart = new Chart(ctx, { 
-        type: 'doughnut', 
-        data: { 
-            labels: Object.keys(s), 
-            datasets: [{ data: Object.values(s), backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777'] }] 
-        }, 
-        options: { maintainAspectRatio: false } 
+function updateChart(data, sF) {
+    let graphData = {};
+    data.forEach(r => { let k = sF === 'all' ? (r.secteur_projet || 'Autre') : (r.zone_intervention || 'Zone NC'); graphData[k] = (graphData[k] || 0) + 1; });
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById('myChart'), {
+        type: sF === 'all' ? 'doughnut' : 'bar',
+        data: { labels: Object.keys(graphData), datasets: [{ data: Object.values(graphData), backgroundColor: ['#0F1B42','#B8972A','#6E8CB5','#10B981'] }] },
+        options: { responsive: true, maintainAspectRatio: false }
     });
 }
 
-function exportToPDF() {
-    const element = document.getElementById('reportContent');
-    const opt = { margin: 10, filename: 'Rapport_CHYC_MEAL.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
-    html2pdf().set(opt).from(element).save();
+function renderTable(data) {
+    const tb = document.getElementById('v-table');
+    tb.innerHTML = data.slice(0,10).map(r => `<tr><td>${new Date(r._submission_time).toLocaleDateString()}<br><small>${r.nom_agent||''}</small></td><td>${r.secteur_projet||''}</td><td>${(parseInt(r.nb_beneficiaires_h||0)+parseInt(r.nb_beneficiaires_f||0))}</td><td>${parseFloat(r.montant_depense||0).toLocaleString()}</td></tr>`).join('');
 }
 
+function exportPDF() { html2pdf().from(document.getElementById('report-area')).save('Rapport_CHYC.pdf'); }
 window.onload = fetchData;
 </script>
 </body>
-</html>
+  </html>
+  
