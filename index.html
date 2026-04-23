@@ -2,672 +2,194 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CHYC CONSULTING — Fiche Terrain Multi-Secteurs v2.0</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>CHYC-MEAL ERP v2.9 FINAL</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600&display=swap');
-
-  :root {
-    --navy: #1a2744;
-    --navy-deep: #0f1a30;
-    --navy-mid: #243358;
-    --gold: #c8a96e;
-    --gold-light: #e2c98e;
-    --white: #f8f9fc;
-    --gray-light: #eef0f5;
-    --gray: #8a93a8;
-    --success: #2ecc71;
-    --error: #e74c3c;
-    --text: #2c3e50;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: var(--navy-deep);
-    min-height: 100vh;
-    color: var(--text);
-    background-image: 
-      radial-gradient(ellipse at 20% 0%, rgba(200,169,110,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, rgba(26,39,68,0.6) 0%, transparent 50%);
-  }
-
-  /* ── HEADER ── */
-  .site-header {
-    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
-    border-bottom: 2px solid var(--gold);
-    padding: 28px 24px 22px;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-  }
-
-  .site-header img {
-    height: 72px;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
-  }
-
-  .site-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.35rem;
-    color: var(--white);
-    letter-spacing: 0.04em;
-  }
-
-  .site-header .tagline {
-    font-size: 0.78rem;
-    color: var(--gold-light);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 3px;
-    font-weight: 300;
-  }
-
-  .form-badge {
-    display: inline-block;
-    background: var(--gold);
-    color: var(--navy-deep);
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 3px 12px;
-    border-radius: 20px;
-    margin-top: 10px;
-  }
-
-  /* ── LAYOUT ── */
-  .container {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 32px 16px 60px;
-  }
-
-  /* ── PROGRESS ── */
-  .progress-wrap {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(200,169,110,0.2);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-bottom: 28px;
-  }
-
-  .progress-label {
-    color: var(--gold-light);
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .progress-bar-bg {
-    background: rgba(255,255,255,0.08);
-    border-radius: 4px;
-    height: 6px;
-    overflow: hidden;
-  }
-
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold-light));
-    border-radius: 4px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-
-  /* ── SECTIONS ── */
-  .section {
-    display: none;
-    animation: fadeIn 0.35s ease;
-  }
-
-  .section.active { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .section-card {
-    background: rgba(255,255,255,0.97);
-    border-radius: 16px;
-    padding: 32px 28px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.35);
-    border-top: 4px solid var(--gold);
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--navy);
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-title .icon {
-    background: var(--navy);
-    color: var(--gold-light);
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-
-  .section-divider {
-    height: 2px;
-    background: linear-gradient(90deg, var(--gold) 0%, var(--gray-light) 100%);
-    margin: 14px 0 24px;
-    border-radius: 2px;
-  }
-
-  /* ── FIELDS ── */
-  .field-group {
-    margin-bottom: 22px;
-  }
-
-  label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--navy);
-    margin-bottom: 6px;
-    letter-spacing: 0.02em;
-  }
-
-  label .required { color: var(--error); margin-left: 2px; }
-
-  .hint {
-    font-size: 0.76rem;
-    color: var(--gray);
-    margin-bottom: 6px;
-    font-style: italic;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  textarea {
-    width: 100%;
-    border: 1.5px solid #d0d5e0;
-    border-radius: 8px;
-    padding: 11px 14px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem;
-    color: var(--text);
-    background: var(--white);
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-    appearance: none;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--navy);
-    box-shadow: 0 0 0 3px rgba(26,39,68,0.1);
-  }
-
-  input.invalid, select.invalid, textarea.invalid {
-    border-color: var(--error);
-    box-shadow: 0 0 0 3px rgba(231,76,60,0.1);
-  }
-
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231a2744' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
-    cursor: pointer;
-  }
-
-  textarea { resize: vertical; min-height: 80px; }
-
-  /* checkboxes / radios */
-  .choice-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .choice-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border: 1.5px solid #d0d5e0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    font-size: 0.9rem;
-    color: var(--text);
-    user-select: none;
-  }
-
-  .choice-item:hover { background: var(--gray-light); border-color: var(--navy); }
-
-  .choice-item input[type="radio"],
-  .choice-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    border: 2px solid #aab;
-    border-radius: 50%;
-    appearance: none;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    padding: 0;
-    background: white;
-  }
-
-  .choice-item input[type="checkbox"] { border-radius: 4px; }
-
-  .choice-item input[type="radio"]:checked,
-  .choice-item input[type="checkbox"]:checked {
-    background: var(--navy);
-    border-color: var(--navy);
-  }
-
-  .choice-item input[type="radio"]:checked::after {
-    content: '';
-    width: 7px;
-    height: 7px;
-    background: white;
-    border-radius: 50%;
-    display: block;
-    margin: auto;
-  }
-
-  .choice-item input[type="checkbox"]:checked::after {
-    content: '✓';
-    color: white;
-    font-size: 12px;
-    display: block;
-    text-align: center;
-    line-height: 1;
-    margin: auto;
-  }
-
-  /* ── TOTAL BOX ── */
-  .total-box {
-    background: var(--navy);
-    color: white;
-    border-radius: 8px;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-  }
-
-  .total-box .total-label { font-size: 0.85rem; color: var(--gold-light); }
-  .total-box .total-value { font-size: 1.4rem; font-weight: 700; color: var(--gold); }
-
-  /* ── CONDITIONAL MODULE ── */
-  .module-indicator {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
-    border-radius: 10px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-    color: var(--gold-light);
-    font-size: 0.82rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-left: 3px solid var(--gold);
-  }
-
-  /* ── PHOTO UPLOAD ── */
-  .photo-upload {
-    border: 2px dashed #c0c8d8;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    color: var(--gray);
-    font-size: 0.88rem;
-  }
-
-  .photo-upload:hover { border-color: var(--navy); background: var(--gray-light); }
-
-  .photo-upload input[type="file"] { display: none; }
-
-  .photo-preview {
-    max-width: 100%;
-    max-height: 180px;
-    border-radius: 8px;
-    margin-top: 10px;
-    display: none;
-  }
-
-  /* ── NAVIGATION ── */
-  .nav-wrap {
-    display: flex;
-    gap: 12px;
-    margin-top: 28px;
-    justify-content: space-between;
-  }
-
-  .btn {
-    padding: 13px 28px;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    letter-spacing: 0.03em;
-  }
-
-  .btn:active { transform: scale(0.97); }
-
-  .btn-prev {
-    background: white;
-    color: var(--navy);
-    border: 2px solid var(--navy);
-    flex: 1;
-  }
-
-  .btn-prev:hover { background: var(--gray-light); }
-
-  .btn-next {
-    background: var(--navy);
-    color: white;
-    flex: 2;
-    box-shadow: 0 4px 16px rgba(26,39,68,0.35);
-  }
-
-  .btn-next:hover { background: var(--navy-mid); box-shadow: 0 6px 20px rgba(26,39,68,0.45); }
-
-  .btn-submit {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-    color: var(--navy-deep);
-    font-weight: 700;
-    flex: 2;
-    box-shadow: 0 4px 16px rgba(200,169,110,0.4);
-  }
-
-  .btn-submit:hover { box-shadow: 0 6px 24px rgba(200,169,110,0.6); }
-
-  /* ── SUCCESS ── */
-  #success-screen {
-    display: none;
-    text-align: center;
-    padding: 60px 20px;
-    animation: fadeIn 0.5s ease;
-  }
-
-  .success-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    font-size: 2.2rem;
-    box-shadow: 0 8px 32px rgba(200,169,110,0.5);
-  }
-
-  #success-screen h2 {
-    font-family: 'Playfair Display', serif;
-    color: var(--white);
-    font-size: 1.6rem;
-    margin-bottom: 10px;
-  }
-
-  #success-screen p { color: var(--gold-light); font-size: 0.95rem; }
-
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    color: rgba(255,255,255,0.3);
-    font-size: 0.72rem;
-    padding: 20px;
-    letter-spacing: 0.06em;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 480px) {
-    .section-card { padding: 22px 16px; }
-    .site-header h1 { font-size: 1.1rem; }
-    .btn { padding: 12px 16px; font-size: 0.85rem; }
-  }
+:root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;--err:#EF4444;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px}
+.btn-group{display:flex;gap:8px}
+.action-btn{border:none;padding:10px 15px;border-radius:25px;font-weight:700;cursor:pointer;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.btn-sync{background:var(--gold);color:var(--navy)}
+.btn-pdf{background:var(--steel, #6E8CB5);color:white}
+.btn-kobo{background:var(--ok);color:white}
+.filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+select{background:rgba(255,255,255,0.2);color:#fff;border:1px solid var(--gold);padding:12px;border-radius:8px;font-size:11px;outline:none;width:100%}
+.main{padding:15px;max-width:1100px;margin:0 auto}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--card);padding:18px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);border-left:5px solid var(--gold)}
+.kpi-label{font-size:9px;color:#64748B;text-transform:uppercase;font-weight:700;margin-bottom:5px;display:block}
+.kpi-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:800}
+.glass-card{background:var(--card);border-radius:15px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{text-align:left;padding:10px;background:#F8FAFC}
+td{padding:10px;border-bottom:1px solid #F1F5F9}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="site-header">
-  <img id="chyc-logo" src="chyc_logo.png" alt="CHYC CONSULTING" onerror="this.style.display='none'">
-  <h1>CHYC CONSULTING</h1>
-  <div class="tagline">Gérer l'impact, Intégrer l'égalité</div>
-  <div class="form-badge">CHYC-MEAL Fiche Terrain v2.0 — Avril 2026</div>
-</header>
-
-<div class="container">
-
-  <!-- PROGRESS -->
-  <div class="progress-wrap">
-    <div class="progress-label">
-      <span id="progress-text">Section 1 / 7</span>
-      <span id="progress-pct">0%</span>
-    </div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" id="progress-bar"></div>
+<header class="hdr">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="hdr-logo-box">CHYC</div>
+    <div class="title-text">
+        <div style="font-weight:800;font-size:14px">CONSULTING</div>
+        <div style="font-size:9px;opacity:0.8">MEAL Intelligence</div>
     </div>
   </div>
+  <div class="btn-group">
+    <button class="action-btn btn-sync" id="syncBtn" onclick="fetchData()">🔄 MAJ</button>
+    <button class="action-btn btn-pdf" onclick="exportToPDF()">📄 PDF</button>
+    <a href="https://ee.kobotoolbox.org/x/aL4EkYb8XAiZW5oTHBbCFK" target="_blank" class="action-btn btn-kobo">➕ COLLECTE</a>
+  </div>
+</header>
 
-  <form id="chyc-form" novalidate>
+<div class="filter-section">
+  <select id="fProj" onchange="render()">
+    <option value="ALL">📂 TOUS LES PROJETS</option>
+    <option value="P001">P001 - Marchands Tabliers</option>
+    <option value="P002">P002 - Formation Numérique</option>
+    <option value="P003">P003 - Microfinance</option>
+    <option value="P004">P004 - Santé Communautaire</option>
+    <option value="P005">P005 - Agropastoral</option>
+  </select>
+  <select id="fSect" onchange="render()">
+    <option value="ALL">🎯 TOUS LES SECTEURS</option>
+    <option value="sante">Santé</option>
+    <option value="agriculture">Agriculture</option>
+    <option value="microfinance">Microfinance</option>
+    <option value="education">Éducation</option>
+    <option value="wash">WASH</option>
+    <option value="protection">Protection</option>
+    <option value="logistique">Logistique</option>
+  </select>
+</div>
 
-    <!-- ──────── SECTION 1 : IDENTIFICATION ──────── -->
-    <div class="section active" id="sec-1">
-      <div class="section-card">
-        <div class="section-title">
-          <div class="icon">①</div>
-          <span>Identification</span>
-        </div>
-        <div class="section-divider"></div>
+<div class="main" id="reportContent">
+  <div class="kpi-grid">
+    <div class="kpi-card"><span class="kpi-label">Bénéficiaires</span><span class="kpi-val" id="vTotal">0</span></div>
+    <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Distribués</span><span class="kpi-val" id="vKits">0</span></div>
+    <div class="kpi-card" style="border-left-color:#DB2777"><span class="kpi-label">% Femmes</span><span class="kpi-val" id="vFemmes">0%</span></div>
+    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Budget (XOF)</span><span class="kpi-val" id="vBudget">0</span></div>
+  </div>
 
-        <div class="field-group">
-          <label for="nom_agent">Nom complet de l'agent <span class="required">*</span></label>
-          <div class="hint">Prénom et Nom</div>
-          <input type="text" id="nom_agent" name="nom_agent" placeholder="Ex : Aminata Diallo" required>
-        </div>
-
-        <div class="field-group">
-          <label for="code_projet">Projet concerné <span class="required">*</span></label>
-          <select id="code_projet" name="code_projet" required onchange="updateModuleHint()">
-            <option value="">— Sélectionnez un projet —</option>
-            <option value="P001">Projet Appui Marchands Tabliers</option>
-            <option value="P002">Projet Formation Numérique</option>
-            <option value="P003">Projet Microfinance Saint-Louis</option>
-            <option value="P004">Projet Santé Communautaire</option>
-            <option value="P005">Projet Agropastoral Vallée</option>
-            <option value="AUTRE">Autre projet</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label for="secteur_projet">Secteur du projet <span class="required">*</span></label>
-          <select id="secteur_projet" name="secteur_projet" required onchange="updateModuleHint()">
-            <option value="">— Sélectionnez un secteur —</option>
-            <option value="sante">🏥 Santé</option>
-            <option value="agriculture">🌾 Agriculture</option>
-            <option value="microfinance">💰 Microfinance / AGR</option>
-            <option value="education">📚 Éducation / Formation</option>
-            <option value="wash">🚰 Eau & Assainissement (WASH)</option>
-            <option value="protection">🛡 Protection & Genre</option>
-            <option value="logistique">📦 Logistique / Distribution</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label for="zone_intervention">Zone / Localité <span class="required">*</span></label>
-          <div class="hint">Village, commune...</div>
-          <input type="text" id="zone_intervention" name="zone_intervention" placeholder="Ex : Commune de Gandon" required>
-        </div>
-
-        <div class="field-group">
-          <label for="date_mission">Date de la mission <span class="required">*</span></label>
-          <input type="date" id="date_mission" name="date_mission" required>
-        </div>
-
-        <div class="nav-wrap">
-          <button type="button" class="btn btn-next" onclick="goNext(1)">Suivant →</button>
-        </div>
-      </div>
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+    <div class="glass-card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 REPARTITION SECTORIELLE</div>
+        <div style="height:220px"><canvas id="sectorChart"></canvas></div>
     </div>
-
-    <!-- ──────── SECTION 2 : ACTIVITÉ ──────── -->
-    <div class="section" id="sec-2">
-      <div class="section-card">
-        <div class="section-title">
-          <div class="icon">②</div>
-          <span>Activité Réalisée</span>
+    <div class="glass-card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 JOURNAL DE TERRAIN</div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Date</th><th>Agent / Zone</th><th>Impact</th></tr></thead>
+            <tbody id="tblBody"></tbody>
+          </table>
         </div>
-        <div class="section-divider"></div>
-
-        <div class="field-group">
-          <label for="type_activite">Type d'activité <span class="required">*</span></label>
-          <select id="type_activite" name="type_activite" required>
-            <option value="">— Sélectionnez —</option>
-            <option value="FORM">Session de formation</option>
-            <option value="SUIVI">Visite de suivi</option>
-            <option value="DISTRIB">Distribution de matériel</option>
-            <option value="REUNION">Réunion communautaire</option>
-            <option value="SENSIBI">Sensibilisation</option>
-            <option value="EVAL">Évaluation / Collecte</option>
-            <option value="AUTRE">Autre activité</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label for="description_activite">Description <span class="required">*</span></label>
-          <textarea id="description_activite" name="description_activite" placeholder="Décrivez brièvement l'activité réalisée..." required></textarea>
-        </div>
-
-        <div class="field-group">
-          <label for="nb_beneficiaires_h">Bénéficiaires Hommes <span class="required">*</span></label>
-          <input type="number" id="nb_beneficiaires_h" name="nb_beneficiaires_h" min="0" value="0" required oninput="calcTotal()">
-        </div>
-
-        <div class="field-group">
-          <label for="nb_beneficiaires_f">Bénéficiaires Femmes <span class="required">*</span></label>
-          <input type="number" id="nb_beneficiaires_f" name="nb_beneficiaires_f" min="0" value="0" required oninput="calcTotal()">
-        </div>
-
-        <div class="total-box">
-          <div class="total-label">Total Bénéficiaires</div>
-          <div class="total-value" id="total_display">0</div>
-        </div>
-
-        <div class="nav-wrap">
-          <button type="button" class="btn btn-prev" onclick="goTo(1)">← Retour</button>
-          <button type="button" class="btn btn-next" onclick="goNext(2)">Suivant →</button>
-        </div>
-      </div>
     </div>
+  </div>
+</div>
 
-    <!-- ──────── SECTION 3 : INDICATEURS ──────── -->
-    <div class="section" id="sec-3">
-      <div class="section-card">
-        <div class="section-title">
-          <div class="icon">③</div>
-          <span>Indicateurs</span>
-        </div>
-        <div class="section-divider"></div>
+<script>
+const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK'; 
+const PROXY = 'https://api.allorigins.win/get?url=';
+let rawData = [];
+let myChart = null;
 
-        <div class="field-group">
-          <label for="valeur_indicateur">Valeur de l'indicateur <span class="required">*</span></label>
-          <input type="number" id="valeur_indicateur" name="valeur_indicateur" step="any" min="0" placeholder="Ex : 45" required>
-        </div>
+async function fetchData() {
+    const btn = document.getElementById('syncBtn');
+    btn.textContent = '...';
+    const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
+    try {
+        const resp = await fetch(PROXY + encodeURIComponent(targetUrl) + '&t=' + Date.now());
+        const json = await resp.json();
+        const content = JSON.parse(json.contents);
+        if (content.results) {
+            rawData = content.results;
+            btn.textContent = '✅ ' + rawData.length;
+            render();
+        }
+    } catch (e) { btn.textContent = '❌'; }
+}
 
-        <div class="field-group">
-          <label for="unite_mesure">Unité de mesure <span class="required">*</span></label>
-          <select id="unite_mesure" name="unite_mesure" required>
-            <option value="">— Sélectionnez une unité —</option>
-            <option value="PERS">Personnes</option>
-            <option value="PCT">Pourcentage (%)</option>
-            <option value="SEANCE">Séances</option>
-            <option value="KIT">Kits</option>
-            <option value="HA">Hectares (ha)</option>
-            <option value="FCFA">FCFA</option>
-            <option value="AUTRE">Autre unité</option>
-          </select>
-        </div>
+function render() {
+    const pF = document.getElementById('fProj').value;
+    const sF = document.getElementById('fSect').value;
+    
+    const filtered = rawData.filter(r => {
+        const matchP = (pF === 'ALL' || (r.code_projet && r.code_projet.includes(pF)));
+        const matchS = (sF === 'ALL' || (r.secteur_projet && r.secteur_projet.includes(sF)));
+        return matchP && matchS;
+    });
 
-        <div class="field-group">
-          <label for="commentaire_indicateur">Commentaire</label>
-          <textarea id="commentaire_indicateur" name="commentaire_indicateur" placeholder="Observations sur l'indicateur (optionnel)..."></textarea>
-        </div>
+    let bTotal=0, bF=0, kits=0, budget=0;
+    const tbody = document.getElementById('tblBody');
+    tbody.innerHTML = '';
 
-        <div class="nav-wrap">
-          <button type="button" class="btn btn-prev" onclick="goTo(2)">← Retour</button>
-          <button type="button" class="btn btn-next" onclick="goNext(3)">Suivant →</button>
-        </div>
-      </div>
-    </div>
+    filtered.forEach((r, idx) => {
+        const h = parseInt(r.nb_beneficiaires_h || 0);
+        const f = parseInt(r.nb_beneficiaires_f || 0);
+        bTotal += (h + f);
+        bF += f;
+        kits += parseInt(r.nb_kits_distribues || 0);
+        budget += parseFloat(r.montant_depense || 0);
 
-    <!-- ──────── SECTION 4 : SUIVI FINANCIER ──────── -->
-    <div class="section" id="sec-4">
-      <div class="section-card">
-        <div class="section-title">
-          <div class="icon">④</div>
-          <span>Suivi Financier</span>
-        </div>
-        <div class="section-divider"></div>
+        if(idx < 8) {
+            tbody.innerHTML += `<tr>
+                <td>${(r.date_mission || '').split('T')[0]}</td>
+                <td><b>${r.nom_agent || 'N/A'}</b><br><small>${r.zone_intervention || ''}</small></td>
+                <td>${h+f} pers.</td>
+            </tr>`;
+        }
+    });
 
-        <div class="field-group">
-          <label for="montant_depense">Montant dépensé (FCFA) <span class="required">*</span></label>
-          <input type="number" id="montant_depense" name="montant_depense" min="0" step="any" value="0" required>
-        </div>
+    document.getElementById('vTotal').textContent = bTotal.toLocaleString();
+    document.getElementById('vKits').textContent = kits.toLocaleString();
+    document.getElementById('vBudget').textContent = budget.toLocaleString();
+    document.getElementById('vFemmes').textContent = bTotal > 0 ? Math.round((bF/bTotal)*100)+'%' : '0%';
+    
+    updateChart(filtered);
+}
 
-        <div class="field-group">
-          <label for="rubrique_depense">Rubrique budgétaire <span class="required">*</span></label>
-          <select id="rubrique_depense" name="rubrique_depense" required>
-            <option value="">— Sélectionnez —</option>
-            <option value="TRANS">Transport</option>
-            <option value="RESTO">Restauration</option>
-            <option value="MATER">Matériel / Fournitures</option>
-            <option value="PER_DIEM">Per Diem</option>
-            <option value="AUTRE">Autre rubrique</option>
-          </select>
-        </div>
+function updateChart(data) {
+    const ctx = document.getElementById('sectorChart').getContext('2d');
+    const sectors = {};
+    data.forEach(r => { 
+        const s = r.secteur_projet || 'Autre';
+        sectors[s] = (sectors[s] || 0) + 1; 
+    });
+    
+    if (myChart) myChart.destroy();
+    myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(sectors),
+            datasets: [{ 
+                data: Object.values(sectors), 
+                backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777'] 
+            }]
+        },
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+}
 
-        <div class="field-group">
-          <label for="justificatif">Justificatif disponible ?</label>
-          <div class="choice-group">
-            <label class="choice-item">
-              <input type="radio" name="justificatif" value="oui"> Oui
-            </label>
-            <label class="choice-item">
-              <input type="radio" name="justificatif" value="non"> Non
-            </label>
-          </div>
-        </div>
+function exportToPDF() {
+    const element = document.getElementById('reportContent');
+    const opt = {
+        margin: 10,
+        filename: 'Rapport_CHYC_MEAL.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+}
 
-        <div class="nav-wrap">
-          <button type="button" class="btn btn-prev" onclick="goTo(3)">← Retour</button>
-          <button type="button" class="btn btn-next" onclick="goNext(4)">Suivant →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ──────── SECTION 5 : MODULE SECTORIEL ────────
+window.onload = fetchData;
+</script>
+</body>
+</html>
