@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <title>CHYC-MEAL v9.1 | Dashboard Live</title>
+    <title>CHYC-MEAL v9.4 | Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
@@ -11,40 +11,25 @@
         :root { --navy: #0F1B42; --gold: #B8972A; --bg: #F4F7FE; --ok: #10B981; --err: #EF4444; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--navy); }
-
-        header { background: var(--navy); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,.3); }
+        header { background: var(--navy); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo-box { background: var(--gold); color: var(--navy); padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: .85rem; }
         #sync-status { font-size: .7rem; cursor: pointer; padding: 6px 14px; border-radius: 20px; background: #64748B; color: white; font-weight: 700; border: none; }
-        .status-ok  { background: var(--ok)  !important; }
+        .status-ok { background: var(--ok) !important; }
         .status-err { background: var(--err) !important; }
-
         .filter-bar { background: #1A2A5E; padding: 10px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px 8px; border-radius: 8px; font-size: .75rem; width: 100%; appearance: auto; cursor: pointer; }
-
-        .sect-banner { display: none; padding: 10px 14px; font-size: .75rem; font-weight: 700; color: #fff; align-items: center; gap: 8px; }
-
+        select { background: #243470; color: white; border: 1px solid var(--gold); padding: 10px; border-radius: 8px; font-size: .75rem; width: 100%; appearance: auto; cursor: pointer; }
         .container { padding: 14px; max-width: 900px; margin: 0 auto; }
         .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: .75rem; text-decoration: none; cursor: pointer; color: white; }
-        .btn-pdf  { background: #334155; }
+        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: .75rem; text-decoration: none; text-align: center; }
+        .btn-pdf { background: #334155; color: white; }
         .btn-kobo { background: var(--gold); color: var(--navy); }
-
         .kpi-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 16px; }
         .kpi-card { background: #fff; padding: 16px; border-radius: 14px; border-bottom: 4px solid #E2E8F0; }
-        .active-kpi { border-bottom-color: var(--gold) !important; box-shadow: 0 4px 16px rgba(184,151,42,.2); }
-        .kpi-val { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
-        .kpi-lbl { font-size: .6rem; color: #64748B; font-weight: 600; text-transform: uppercase; }
-
-        .sect-panel { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 14px; border-left: 4px solid var(--gold); display: none; }
-        .sect-indicators { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
-        .s-ind { background: #F4F7FE; border-radius: 10px; padding: 12px 10px; text-align: center; }
-        .s-ind .s-val { font-size: 1.1rem; font-weight: 800; }
-
+        .kpi-val { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1.1; }
+        .kpi-lbl { font-size: .6rem; color: #64748B; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
         .card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
-        .table-card { background: #fff; border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
         table { width: 100%; border-collapse: collapse; font-size: .72rem; }
-        th { background: var(--navy); color: #fff; padding: 10px; text-align: left; font-size: .6rem; }
-        td { padding: 10px; border-bottom: 1px solid #F1F5F9; }
+        td { padding: 12px 10px; border-bottom: 1px solid #F1F5F9; }
     </style>
 </head>
 <body>
@@ -52,7 +37,7 @@
 <header>
     <div style="display:flex;align-items:center;gap:10px">
         <div class="logo-box">CHYC</div>
-        <div style="font-weight:800;font-size:.85rem">MEAL v9.1</div>
+        <div style="font-weight:800;font-size:.85rem">MEAL v9.4</div>
     </div>
     <button id="sync-status" onclick="fetchData()">🔄 ACTUALISER</button>
 </header>
@@ -63,67 +48,49 @@
         <option value="ALL">📂 SECTEURS (TOUS)</option>
         <option value="sante">🏥 Santé</option>
         <option value="agriculture">🌾 Agriculture</option>
-        <option value="microfinance">💰 Microfinance / AGR</option>
-        <option value="education">📚 Éducation / Formation</option>
-        <option value="wash">🚰 Eau & Assainissement</option>
-        <option value="protection">🛡️ Protection & Genre</option>
-        <option value="logistique">📦 Logistique / Distribution</option>
+        <option value="microfinance">💰 Microfinance</option>
+        <option value="education">📚 Éducation</option>
+        <option value="wash">🚰 WASH</option>
+        <option value="protection">🛡️ Protection</option>
     </select>
 </div>
 
-<div class="sect-banner" id="sect-banner"></div>
-
 <div class="container" id="report-area">
     <div class="action-row">
-        <a href="https://ee.kobotoolbox.org/x/aTta3p1L" target="_blank" class="btn btn-kobo">➕ COLLECTE KOBO</a>
+        <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="btn btn-kobo">➕ COLLECTE KOBO</a>
         <button onclick="exportPDF()" class="btn btn-pdf">📄 RAPPORT PDF</button>
     </div>
 
     <div class="kpi-grid">
-        <div class="kpi-card" id="kpi-ben"><span class="kpi-val" id="v-ben">0</span><span class="kpi-lbl">BÉNÉFICIAIRES</span></div>
-        <div class="kpi-card" id="kpi-gen"><span class="kpi-val" id="v-gen" style="color:#DB2777">0%</span><span class="kpi-lbl">♀ FEMMES</span></div>
-        <div class="kpi-card" id="kpi-cash"><span class="kpi-val" id="v-cash" style="color:#059669">0 F</span><span class="kpi-lbl">DÉPENSES</span></div>
-        <div class="kpi-card" id="kpi-act"><span class="kpi-val" id="v-act">0</span><span class="kpi-lbl">MISSIONS</span></div>
-    </div>
-
-    <div class="sect-panel" id="sect-panel">
-        <h3 id="sect-panel-title" style="font-size:0.8rem; margin-bottom:10px;">🎯 Indicateurs Sectoriels</h3>
-        <div class="sect-indicators" id="sect-indicators"></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-ben">0</span><span class="kpi-lbl">BÉNÉFICIAIRES</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-gen" style="color:#DB2777">0%</span><span class="kpi-lbl">♀ FEMMES</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-cash" style="color:#059669">0 F</span><span class="kpi-lbl">DÉPENSES</span></div>
+        <div class="kpi-card"><span class="kpi-val" id="v-act">0</span><span class="kpi-lbl">MISSIONS</span></div>
     </div>
 
     <div class="card">
-        <div id="chart-title" style="font-size:0.75rem; font-weight:700; margin-bottom:10px;">📊 Répartition</div>
         <div style="height:180px"><canvas id="myChart"></canvas></div>
     </div>
 
-    <div class="table-card">
-        <table>
-            <thead><tr id="table-head"><th>Date · Agent</th><th>Zone · Secteur</th><th>Bénéf.</th><th>Dépense</th></tr></thead>
-            <tbody id="v-table"></tbody>
-        </table>
+    <div class="table-card card" style="padding:0">
+        <table><tbody id="v-table"></tbody></table>
     </div>
 </div>
 
 <script>
-const ASSET_ID = 'anJWsYbZiGvWEz3ZjmwcqY';
+// ID mis à jour avec celui de votre lien
+const ASSET_ID = 'aL4EkYb8XAiZW5oTHBbCFK'; 
+
 let rawData = [];
 let chart = null;
-
-const SECT_CONFIG = {
-    sante: { label: '🏥 Santé', color: '#6E8CB5', bgColor: '#EEF4FF', indicators: [{ key: 'nb_consultations', label: 'Consultations' }, { key: 'nb_enfants_vaccines', label: 'Vaccinés' }] },
-    agriculture: { label: '🌾 Agriculture', color: '#4CAF8A', bgColor: '#EDFAF4', indicators: [{ key: 'nb_agriculteurs_touches', label: 'Agriculteurs' }, { key: 'superficie_ha', label: 'Hectares', dec: true }] },
-    microfinance: { label: '💰 Microfinance', color: '#B8972A', bgColor: '#FEF7E8', indicators: [{ key: 'nb_beneficiaires_credit', label: 'Bénéf. Crédit' }, { key: 'montant_credit_octroye', label: 'Crédit octroyé', dec: true }] },
-    education: { label: '📚 Éducation', color: '#1A2A5E', bgColor: '#EEF2FA', indicators: [{ key: 'nb_apprenants_h', label: 'Apprenants H' }, { key: 'nb_apprenants_f', label: 'Apprenants F' }] },
-    wash: { label: '🚰 WASH', color: '#29B6D8', bgColor: '#EBF9FD', indicators: [{ key: 'nb_menages_acces_eau', label: 'Ménages Eau' }, { key: 'nb_points_eau', label: 'Points d\'eau' }] },
-    protection: { label: '🛡️ Protection', color: '#E26B60', bgColor: '#FFF0EF', indicators: [{ key: 'nb_cas_VBG_documentes', label: 'Cas VBG' }, { key: 'nb_cas_references', label: 'Cas Référés' }] },
-    logistique: { label: '📦 Logistique', color: '#9B59B6', bgColor: '#F5EFFE', indicators: [{ key: 'nb_kits_distribues', label: 'Kits' }, { key: 'stock_final', label: 'Stock Final' }] }
-};
 
 async function fetchData() {
     const st = document.getElementById('sync-status');
     st.innerText = '⌛ SYNC...';
+    st.className = '';
+    const url = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
     try {
-        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kf.kobotoolbox.org/api/v2/assets/'+ASSET_ID+'/data.json')}&t=${Date.now()}`);
+        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}&t=${Date.now()}`);
         const d = await r.json();
         const content = JSON.parse(d.contents);
         if (content.results) {
@@ -133,66 +100,69 @@ async function fetchData() {
             initProjectFilter();
             render();
         }
-    } catch (e) { st.innerText = '❌ ERREUR'; st.className = 'status-err'; }
+    } catch (e) {
+        st.innerText = '❌ ERREUR';
+        st.className = 'status-err';
+    }
 }
 
 function initProjectFilter() {
     const pS = document.getElementById('f-proj');
     const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean).sort();
     pS.innerHTML = '<option value="ALL">🏢 PROJETS (TOUS)</option>';
-    projs.forEach(p => pS.innerHTML += `<option value="${p}">${p}</option>`);
+    projs.forEach(p => pS.innerHTML += `<option value="${p}">${p.toUpperCase()}</option>`);
 }
 
 function render() {
     const pF = document.getElementById('f-proj').value;
     const sF = document.getElementById('f-sect').value.toLowerCase().trim();
-    const data = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'all' || (r.secteur_projet||'').toLowerCase().trim() === sF));
 
-    let benH=0, benF=0, cash=0;
-    data.forEach(r => { benH += parseInt(r.nb_beneficiaires_h||0); benF += parseInt(r.nb_beneficiaires_f||0); cash += parseFloat(r.montant_depense||0); });
-    
-    document.getElementById('v-ben').innerText = (benH+benF).toLocaleString();
-    document.getElementById('v-gen').innerText = (benH+benF) > 0 ? Math.round((benF/(benH+benF))*100)+'%' : '0%';
+    const data = rawData.filter(r => {
+        const valP = (r.code_projet || '').toString();
+        const valS = (r.secteur_projet || '').toString().toLowerCase().trim();
+        return (pF === 'ALL' || valP === pF) && (sF === 'all' || valS.includes(sF));
+    });
+
+    let ben = 0, f = 0, cash = 0, graphData = {};
+    const tb = document.getElementById('v-table');
+    tb.innerHTML = '';
+
+    data.forEach((r, i) => {
+        // Recherche des bénéficiaires dans les différents groupes possibles de Kobo
+        const vH = parseInt(r.nb_beneficiaires_h || r['grp_impact/nb_beneficiaires_h'] || 0);
+        const vF = parseInt(r.nb_beneficiaires_f || r['grp_impact/nb_beneficiaires_f'] || 0);
+        const vM = parseFloat(r.montant_depense || r['grp_impact/montant_depense'] || 0);
+        
+        ben += (vH + vF); f += vF; cash += vM;
+        let s = (r.secteur_projet || 'Autre').toUpperCase();
+        graphData[s] = (graphData[s] || 0) + 1;
+        
+        if(i < 8) {
+            tb.innerHTML += `<tr>
+                <td>${new Date(r._submission_time).toLocaleDateString()}<br><small>${r.nom_agent || 'Agent'}</small></td>
+                <td style="text-align:right"><b>${(vH+vF)} Bénéf.</b><br>${vM.toLocaleString()} F</td>
+            </tr>`;
+        }
+    });
+
+    document.getElementById('v-ben').innerText = ben.toLocaleString();
+    document.getElementById('v-gen').innerText = ben > 0 ? Math.round((f/ben)*100)+'%' : '0%';
     document.getElementById('v-cash').innerText = Math.round(cash).toLocaleString() + ' F';
     document.getElementById('v-act').innerText = data.length;
 
-    const banner = document.getElementById('sect-banner');
-    const panel = document.getElementById('sect-panel');
-    const cfg = SECT_CONFIG[sF];
-
-    if (sF !== 'all' && cfg) {
-        banner.style.display = 'flex'; banner.style.background = cfg.color;
-        banner.innerHTML = `Filtre : <strong>${cfg.label}</strong> — ${data.length} missions`;
-        panel.style.display = 'block';
-        document.getElementById('sect-indicators').innerHTML = cfg.indicators.map(ind => {
-            let val = data.reduce((a,r) => a + parseFloat(r[ind.key]||0), 0);
-            return `<div class="s-ind" style="background:${cfg.bgColor}"><div class="s-val" style="color:${cfg.color}">${val.toLocaleString()}</div><div class="s-lbl">${ind.label}</div></div>`;
-        }).join('');
-    } else { banner.style.display = 'none'; panel.style.display = 'none'; }
-
-    updateChart(data, sF);
-    renderTable(data);
-}
-
-function updateChart(data, sF) {
-    let graphData = {};
-    data.forEach(r => { let k = sF === 'all' ? (r.secteur_projet || 'Autre') : (r.zone_intervention || 'Zone NC'); graphData[k] = (graphData[k] || 0) + 1; });
     if (chart) chart.destroy();
     chart = new Chart(document.getElementById('myChart'), {
-        type: sF === 'all' ? 'doughnut' : 'bar',
-        data: { labels: Object.keys(graphData), datasets: [{ data: Object.values(graphData), backgroundColor: ['#0F1B42','#B8972A','#6E8CB5','#10B981'] }] },
-        options: { responsive: true, maintainAspectRatio: false }
+        type: 'doughnut',
+        data: { 
+            labels: Object.keys(graphData), 
+            datasets: [{ data: Object.values(graphData), backgroundColor: ['#0F1B42','#B8972A','#6E8CB5','#10B981','#E26B60'] }] 
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
     });
-}
-
-function renderTable(data) {
-    const tb = document.getElementById('v-table');
-    tb.innerHTML = data.slice(0,10).map(r => `<tr><td>${new Date(r._submission_time).toLocaleDateString()}<br><small>${r.nom_agent||''}</small></td><td>${r.secteur_projet||''}</td><td>${(parseInt(r.nb_beneficiaires_h||0)+parseInt(r.nb_beneficiaires_f||0))}</td><td>${parseFloat(r.montant_depense||0).toLocaleString()}</td></tr>`).join('');
 }
 
 function exportPDF() { html2pdf().from(document.getElementById('report-area')).save('Rapport_CHYC.pdf'); }
 window.onload = fetchData;
 </script>
 </body>
-  </html>
-  
+</html>
