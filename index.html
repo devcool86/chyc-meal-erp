@@ -3,48 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CHYC-MEAL ERP v2.9 FINAL</title>
+<title>CHYC-MEAL ERP v3.1</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;--err:#EF4444;}
+:root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
-.hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px}
-.btn-group{display:flex;gap:8px}
-.action-btn{border:none;padding:10px 15px;border-radius:25px;font-weight:700;cursor:pointer;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.btn-group{display:flex;gap:5px}
+.action-btn{border:none;padding:10px 12px;border-radius:25px;font-weight:700;cursor:pointer;font-size:10px;text-decoration:none;display:inline-flex;align-items:center;color:#fff}
 .btn-sync{background:var(--gold);color:var(--navy)}
-.btn-pdf{background:var(--steel, #6E8CB5);color:white}
-.btn-kobo{background:var(--ok);color:white}
-.filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-select{background:rgba(255,255,255,0.2);color:#fff;border:1px solid var(--gold);padding:12px;border-radius:8px;font-size:11px;outline:none;width:100%}
+.btn-pdf{background:#6E8CB5}
+.btn-kobo{background:var(--ok)}
+.filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+select{background:rgba(255,255,255,0.15);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:11px;width:100%;outline:none}
 .main{padding:15px;max-width:1100px;margin:0 auto}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;margin-bottom:20px}
-.kpi-card{background:var(--card);padding:18px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);border-left:5px solid var(--gold)}
+.kpi-card{background:var(--card);padding:15px;border-radius:15px;border-left:5px solid var(--gold);box-shadow:0 4px 15px rgba(0,0,0,0.05)}
 .kpi-label{font-size:9px;color:#64748B;text-transform:uppercase;font-weight:700;margin-bottom:5px;display:block}
-.kpi-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:800}
-.glass-card{background:var(--card);border-radius:15px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);margin-bottom:20px}
+.kpi-val{font-size:18px;font-weight:800}
+.glass-card{background:var(--card);border-radius:15px;padding:15px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.05)}
 table{width:100%;border-collapse:collapse;font-size:10px}
-th{text-align:left;padding:10px;background:#F8FAFC}
+th{text-align:left;padding:8px;background:#F8FAFC;color:#64748B}
 td{padding:10px;border-bottom:1px solid #F1F5F9}
 </style>
 </head>
 <body>
 
 <header class="hdr">
-  <div style="display:flex;align-items:center;gap:10px">
-    <div class="hdr-logo-box">CHYC</div>
-    <div class="title-text">
-        <div style="font-weight:800;font-size:14px">CONSULTING</div>
-        <div style="font-size:9px;opacity:0.8">MEAL Intelligence</div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div style="background:#fff;color:var(--navy);padding:4px 8px;border-radius:5px;font-weight:900">CHYC</div>
+    <div style="line-height:1.1">
+        <div style="font-weight:800;font-size:12px">CONSULTING</div>
+        <div style="font-size:8px;opacity:0.8">MEAL Intelligence</div>
     </div>
   </div>
   <div class="btn-group">
     <button class="action-btn btn-sync" id="syncBtn" onclick="fetchData()">🔄 MAJ</button>
     <button class="action-btn btn-pdf" onclick="exportToPDF()">📄 PDF</button>
-    <a href="https://ee.kobotoolbox.org/x/aL4EkYb8XAiZW5oTHBbCFK" target="_blank" class="action-btn btn-kobo">➕ COLLECTE</a>
+    <a href="https://ee.kobotoolbox.org/x/JA6jKzhp" target="_blank" class="action-btn btn-kobo">➕ SAISIE</a>
   </div>
 </header>
 
@@ -54,7 +53,7 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
     <option value="P001">P001 - Marchands Tabliers</option>
     <option value="P002">P002 - Formation Numérique</option>
     <option value="P003">P003 - Microfinance</option>
-    <option value="P004">P004 - Santé Communautaire</option>
+    <option value="P004">P004 - Santé</option>
     <option value="P005">P005 - Agropastoral</option>
   </select>
   <select id="fSect" onchange="render()">
@@ -65,28 +64,27 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
     <option value="education">Éducation</option>
     <option value="wash">WASH</option>
     <option value="protection">Protection</option>
-    <option value="logistique">Logistique</option>
   </select>
 </div>
 
 <div class="main" id="reportContent">
   <div class="kpi-grid">
     <div class="kpi-card"><span class="kpi-label">Bénéficiaires</span><span class="kpi-val" id="vTotal">0</span></div>
-    <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Distribués</span><span class="kpi-val" id="vKits">0</span></div>
+    <div class="kpi-card" style="border-left-color:var(--ok)"><span class="kpi-label">Kits Livrés</span><span class="kpi-val" id="vKits">0</span></div>
     <div class="kpi-card" style="border-left-color:#DB2777"><span class="kpi-label">% Femmes</span><span class="kpi-val" id="vFemmes">0%</span></div>
-    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Budget (XOF)</span><span class="kpi-val" id="vBudget">0</span></div>
+    <div class="kpi-card" style="border-left-color:#4F46E5"><span class="kpi-label">Dépenses XOF</span><span class="kpi-val" id="vBudget">0</span></div>
   </div>
 
-  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:15px;">
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 REPARTITION SECTORIELLE</div>
-        <div style="height:220px"><canvas id="sectorChart"></canvas></div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📊 RÉPARTITION</div>
+        <div style="height:200px"><canvas id="sectorChart"></canvas></div>
     </div>
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 JOURNAL DE TERRAIN</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">📋 DERNIÈRES ACTIVITÉS</div>
         <div style="overflow-x:auto">
           <table>
-            <thead><tr><th>Date</th><th>Agent / Zone</th><th>Impact</th></tr></thead>
+            <thead><tr><th>Date</th><th>Agent / Localité</th><th>Impact</th></tr></thead>
             <tbody id="tblBody"></tbody>
           </table>
         </div>
@@ -110,10 +108,10 @@ async function fetchData() {
         const content = JSON.parse(json.contents);
         if (content.results) {
             rawData = content.results;
-            btn.textContent = '✅ ' + rawData.length;
+            btn.innerHTML = '✅ ' + rawData.length;
             render();
         }
-    } catch (e) { btn.textContent = '❌'; }
+    } catch (e) { btn.innerHTML = '❌'; }
 }
 
 function render() {
@@ -121,63 +119,47 @@ function render() {
     const sF = document.getElementById('fSect').value;
     
     const filtered = rawData.filter(r => {
-        const matchP = (pF === 'ALL' || (r.code_projet && r.code_projet.includes(pF)));
-        const matchS = (sF === 'ALL' || (r.secteur_projet && r.secteur_projet.includes(sF)));
+        const matchP = (pF === 'ALL' || (r.code_projet || '').includes(pF));
+        const matchS = (sF === 'ALL' || (r.secteur_projet || '').includes(sF));
         return matchP && matchS;
     });
 
-    let bTotal=0, bF=0, kits=0, budget=0;
+    let bT=0, bF=0, k=0, b=0;
     const tbody = document.getElementById('tblBody');
     tbody.innerHTML = '';
 
     filtered.forEach((r, idx) => {
         const h = parseInt(r.nb_beneficiaires_h || 0);
         const f = parseInt(r.nb_beneficiaires_f || 0);
-        bTotal += (h + f);
-        bF += f;
-        kits += parseInt(r.nb_kits_distribues || 0);
-        budget += parseFloat(r.montant_depense || 0);
-
+        bT += (h+f); bF += f;
+        k += parseInt(r.nb_kits_distribues || 0);
+        b += parseFloat(r.montant_depense || 0);
         if(idx < 8) {
-            tbody.innerHTML += `<tr>
-                <td>${(r.date_mission || '').split('T')[0]}</td>
-                <td><b>${r.nom_agent || 'N/A'}</b><br><small>${r.zone_intervention || ''}</small></td>
-                <td>${h+f} pers.</td>
-            </tr>`;
+            tbody.innerHTML += `<tr><td>${(r.date_mission||'').split('T')[0]}</td><td><b>${r.nom_agent||'Agent'}</b><br>${r.zone_intervention||''}</td><td>${h+f}</td></tr>`;
         }
     });
 
-    document.getElementById('vTotal').textContent = bTotal.toLocaleString();
-    document.getElementById('vKits').textContent = kits.toLocaleString();
-    document.getElementById('vBudget').textContent = budget.toLocaleString();
-    document.getElementById('vFemmes').textContent = bTotal > 0 ? Math.round((bF/bTotal)*100)+'%' : '0%';
-    
+    document.getElementById('vTotal').textContent = bT.toLocaleString();
+    document.getElementById('vKits').textContent = k.toLocaleString();
+    document.getElementById('vBudget').textContent = b.toLocaleString();
+    document.getElementById('vFemmes').textContent = bT > 0 ? Math.round((bF/bT)*100)+'%' : '0%';
     updateChart(filtered);
 }
 
 function updateChart(data) {
     const ctx = document.getElementById('sectorChart').getContext('2d');
-    const sectors = {};
-    data.forEach(r => { 
-        const s = r.secteur_projet || 'Autre';
-        sectors[s] = (sectors[s] || 0) + 1; 
-    });
-    
+    const s = {}; data.forEach(r => { const v = r.secteur_projet || 'Autre'; s[v] = (s[v] || 0) + 1; });
     if (myChart) myChart.destroy();
     myChart = new Chart(ctx, {
         type: 'doughnut',
-        data: {
-            labels: Object.keys(sectors),
-            datasets: [{ 
-                data: Object.values(sectors), 
-                backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777'] 
-            }]
-        },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        data: { labels: Object.keys(s), datasets: [{ data: Object.values(s), backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777'] }] },
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } } }
     });
 }
 
 function exportToPDF() {
+    const btn = document.querySelector('.btn-pdf');
+    btn.textContent = '...';
     const element = document.getElementById('reportContent');
     const opt = {
         margin: 10,
@@ -186,7 +168,9 @@ function exportToPDF() {
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(element).save().then(() => {
+        btn.textContent = '📄 PDF';
+    });
 }
 
 window.onload = fetchData;
