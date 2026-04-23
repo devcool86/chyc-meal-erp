@@ -3,18 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CHYC-MEAL ERP v2.5 FINAL</title>
+<title>CHYC-MEAL ERP v2.6 FINAL</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0F1B42;--navy2:#1A2A5E;--gold:#B8972A;--bg:#F4F7FE;--card:#ffffff;--ok:#10B981;--err:#EF4444;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--navy);padding-bottom:40px}
-.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
 .hdr-logo-box{background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;font-weight:900;font-size:18px}
 .sync-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer;font-size:11px}
 .filter-section{background:var(--navy2);padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-select{background:rgba(255,255,255,0.15);color:#fff;border:1px solid var(--gold);padding:10px;border-radius:8px;font-size:11px;outline:none;width:100%}
+select{background:rgba(255,255,255,0.2);color:#fff;border:1px solid var(--gold);padding:12px;border-radius:8px;font-size:11px;outline:none;width:100%;cursor:pointer}
+option{background:var(--navy2);color:#fff}
 .main{padding:15px;max-width:1100px;margin:0 auto}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--card);padding:18px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);border-left:5px solid var(--gold)}
@@ -37,8 +38,24 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
 </header>
 
 <div class="filter-section">
-  <select id="fProj" onchange="render()"><option value="ALL">📂 TOUS LES PROJETS</option></select>
-  <select id="fSect" onchange="render()"><option value="ALL">🎯 TOUS LES SECTEURS</option></select>
+  <select id="fProj" onchange="render()">
+    <option value="ALL">📂 TOUS LES PROJETS</option>
+    <option value="P001">P001 - Marchands Tabliers</option>
+    <option value="P002">P002 - Formation Numérique</option>
+    <option value="P003">P003 - Microfinance</option>
+    <option value="P004">P004 - Santé Communautaire</option>
+    <option value="P005">P005 - Agropastoral</option>
+  </select>
+  <select id="fSect" onchange="render()">
+    <option value="ALL">🎯 TOUS LES SECTEURS</option>
+    <option value="sante">Santé</option>
+    <option value="agriculture">Agriculture</option>
+    <option value="microfinance">Microfinance / AGR</option>
+    <option value="education">Éducation / Formation</option>
+    <option value="wash">WASH</option>
+    <option value="protection">Protection / Genre</option>
+    <option value="logistique">Logistique</option>
+  </select>
 </div>
 
 <div class="main">
@@ -51,13 +68,13 @@ td{padding:10px;border-bottom:1px solid #F1F5F9}
 
   <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 RÉPARTITION</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📊 IMPACT SECTORIEL</div>
         <div style="height:220px"><canvas id="sectorChart"></canvas></div>
     </div>
     <div class="glass-card">
-        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 RÉSUMÉ TERRAIN</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:15px">📋 DERNIÈRES ENTRÉES</div>
         <div style="overflow-x:auto">
-          <table>
+          <table id="mainTable">
             <thead><tr><th>Date</th><th>Agent</th><th>Impact</th></tr></thead>
             <tbody id="tblBody"></tbody>
           </table>
@@ -74,47 +91,39 @@ let myChart = null;
 
 async function fetchData() {
     const btn = document.getElementById('syncBtn');
-    btn.textContent = '⌛ Synchronisation...';
+    btn.textContent = '⌛ Connexion...';
     const targetUrl = `https://kf.kobotoolbox.org/api/v2/assets/${ASSET_ID}/data.json`;
     try {
         const resp = await fetch(PROXY + encodeURIComponent(targetUrl) + '&t=' + Date.now());
         const json = await resp.json();
-        const content = JSON.parse(json.contents);
+        const content = typeof json.contents === 'string' ? JSON.parse(json.contents) : json.contents;
         if (content.results) {
             rawData = content.results;
-            btn.textContent = '✅ ' + rawData.length + ' FORMULAIRES';
-            updateFilters();
+            btn.textContent = '✅ ' + rawData.length + ' MISSIONS';
             render();
         }
-    } catch (e) { btn.textContent = '❌ Erreur de lien'; }
-}
-
-function updateFilters() {
-    const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean);
-    const sects = [...new Set(rawData.map(r => r.secteur_projet))].filter(Boolean);
-    const pSel = document.getElementById('fProj');
-    const sSel = document.getElementById('fSect');
-    
-    pSel.innerHTML = '<option value="ALL">📂 TOUS LES PROJETS</option>';
-    projs.forEach(p => pSel.innerHTML += `<option value="${p}">${p}</option>`);
-    
-    sSel.innerHTML = '<option value="ALL">🎯 TOUS LES SECTEURS</option>';
-    sects.forEach(s => sSel.innerHTML += `<option value="${s}">${s}</option>`);
+    } catch (e) { btn.textContent = '❌ Erreur Kobo'; }
 }
 
 function render() {
     const pF = document.getElementById('fProj').value;
     const sF = document.getElementById('fSect').value;
-    const filtered = rawData.filter(r => (pF === 'ALL' || r.code_projet === pF) && (sF === 'ALL' || r.secteur_projet === sF));
+    
+    // Filtrage rigoureux
+    const filtered = rawData.filter(r => {
+        const matchP = (pF === 'ALL' || r.code_projet === pF);
+        const matchS = (sF === 'ALL' || r.secteur_projet === sF);
+        return matchP && matchS;
+    });
 
     let bH=0, bF=0, kits=0, budget=0;
     const tbody = document.getElementById('tblBody');
     tbody.innerHTML = '';
 
     filtered.forEach(r => {
-        // SOMME INTELLIGENTE : Additionne tous les champs de bénéficiaires possibles dans votre formulaire
-        const h = Number(r.nb_beneficiaires_h || r.nb_consultations_h || r.nb_agri_h || r.nb_membres_h || 0);
-        const f = Number(r.nb_beneficiaires_f || r.nb_consultations_f || r.nb_agri_f || r.nb_membres_f || 0);
+        // Addition intelligente de tous les champs de bénéficiaires du XLSForm
+        const h = Number(r.nb_beneficiaires_h || 0) + Number(r.nb_consultations_h || 0) + Number(r.nb_agri_h || 0) + Number(r.nb_membres_h || 0) + Number(r.nb_eleves_h || 0);
+        const f = Number(r.nb_beneficiaires_f || 0) + Number(r.nb_consultations_f || 0) + Number(r.nb_agri_f || 0) + Number(r.nb_membres_f || 0) + Number(r.nb_eleves_f || 0);
         
         bH += h; bF += f;
         kits += Number(r.nb_kits_distribues || 0);
@@ -122,7 +131,7 @@ function render() {
 
         tbody.innerHTML += `<tr>
             <td>${(r.date_mission || '').split('T')[0]}</td>
-            <td><b>${r.nom_agent || '-'}</b></td>
+            <td><b>${r.nom_agent || 'Anonyme'}</b></td>
             <td>${h+f} pers.</td>
         </tr>`;
     });
@@ -132,23 +141,35 @@ function render() {
     document.getElementById('vKits').textContent = kits.toLocaleString();
     document.getElementById('vBudget').textContent = budget.toLocaleString();
     document.getElementById('vFemmes').textContent = total > 0 ? Math.round((bF/total)*100)+'%' : '0%';
+    
     updateChart(filtered);
 }
 
 function updateChart(data) {
     const ctx = document.getElementById('sectorChart').getContext('2d');
     const counts = {};
-    data.forEach(r => { counts[r.secteur_projet] = (counts[r.secteur_projet] || 0) + 1; });
+    data.forEach(r => { 
+        const s = r.secteur_projet || 'Non défini';
+        counts[s] = (counts[s] || 0) + 1; 
+    });
+    
     if (myChart) myChart.destroy();
     myChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: Object.keys(counts),
-            datasets: [{ data: Object.values(counts), backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777'] }]
+            datasets: [{ 
+                data: Object.values(counts), 
+                backgroundColor: ['#0F1B42', '#B8972A', '#10B981', '#4F46E5', '#DB2777', '#F59E0B'] 
+            }]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        options: { 
+            maintainAspectRatio: false, 
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } 
+        }
     });
 }
+
 window.onload = fetchData;
 </script>
 </body>
