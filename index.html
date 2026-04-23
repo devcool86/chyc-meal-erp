@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <title>CHYC-MEAL v9.5 | Live</title>
+    <title>CHYC-MEAL v9.6 | Résolution</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
@@ -23,10 +23,10 @@
         .kpi-val { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1.1; }
         .kpi-lbl { font-size: .6rem; color: #64748B; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
         .card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
-        .table-card { max-height: 400px; overflow-y: auto; background: #fff; border-radius: 14px; }
+        .table-card { max-height: 400px; overflow-y: auto; background: #fff; border-radius: 14px; border: 1px solid #E2E8F0; }
         table { width: 100%; border-collapse: collapse; font-size: .72rem; }
         td { padding: 12px 10px; border-bottom: 1px solid #F1F5F9; }
-        .btn-kobo { background: var(--gold); color: var(--navy); padding: 12px; border-radius: 10px; text-decoration: none; display: block; text-align: center; font-weight: 800; margin-bottom: 15px; font-size: 0.8rem; }
+        .btn-kobo { background: var(--gold); color: var(--navy); padding: 12px; border-radius: 10px; text-decoration: none; display: block; text-align: center; font-weight: 800; margin-bottom: 15px; font-size: 0.8rem; border: none; cursor: pointer;}
     </style>
 </head>
 <body>
@@ -34,7 +34,7 @@
 <header>
     <div style="display:flex;align-items:center;gap:10px">
         <div class="logo-box">CHYC</div>
-        <div style="font-weight:800;font-size:.85rem">MEAL v9.5</div>
+        <div style="font-weight:800;font-size:.85rem">MEAL v9.6</div>
     </div>
     <button id="sync-status" onclick="fetchData()">🔄 ACTUALISER</button>
 </header>
@@ -63,7 +63,7 @@
     </div>
 
     <div class="card">
-        <div style="height:180px"><canvas id="myChart"></canvas></div>
+        <div style="height:200px"><canvas id="myChart"></canvas></div>
     </div>
 
     <div class="table-card">
@@ -90,7 +90,10 @@ async function fetchData() {
             initProjectFilter();
             render();
         }
-    } catch (e) { st.innerText = '❌ ERREUR'; }
+    } catch (e) { 
+        st.innerText = '❌ ERREUR'; 
+        console.error(e);
+    }
 }
 
 function initProjectFilter() {
@@ -98,6 +101,16 @@ function initProjectFilter() {
     const projs = [...new Set(rawData.map(r => r.code_projet))].filter(Boolean).sort();
     pS.innerHTML = '<option value="ALL">🏢 PROJETS (TOUS)</option>';
     projs.forEach(p => pS.innerHTML += `<option value="${p}">${p.toUpperCase()}</option>`);
+}
+
+// Fonction pour chercher une valeur même si le nom de la colonne change
+function getValue(row, key) {
+    if (row[key] !== undefined) return row[key];
+    // Cherche dans les groupes (ex: grp_impact/nb_beneficiaires_h)
+    for (let fullKey in row) {
+        if (fullKey.endsWith('/' + key)) return row[fullKey];
+    }
+    return 0;
 }
 
 function render() {
@@ -115,10 +128,10 @@ function render() {
     tb.innerHTML = '';
 
     data.forEach(r => {
-        // CORRECTION : Lecture des données dans le groupe grp_impact
-        const vH = parseInt(r['grp_impact/nb_beneficiaires_h'] || r.nb_beneficiaires_h || 0);
-        const vF = parseInt(r['grp_impact/nb_beneficiaires_f'] || r.nb_beneficiaires_f || 0);
-        const vM = parseFloat(r['grp_impact/montant_depense'] || r.montant_depense || 0);
+        // Utilisation de la fonction de recherche flexible
+        const vH = parseInt(getValue(r, 'nb_beneficiaires_h'));
+        const vF = parseInt(getValue(r, 'nb_beneficiaires_f'));
+        const vM = parseFloat(getValue(r, 'montant_depense'));
         
         ben += (vH + vF); f += vF; cash += vM;
         let s = (r.secteur_projet || 'AUTRE').toUpperCase();
@@ -126,7 +139,7 @@ function render() {
         
         tb.innerHTML += `<tr>
             <td>${new Date(r._submission_time).toLocaleDateString()}<br><small>${r.nom_agent || 'Agent'}</small></td>
-            <td><b>${s}</b><br>${r.zone_intervention || ''}</td>
+            <td><b>${s}</b><br><small>${r.zone_intervention || ''}</small></td>
             <td style="text-align:right"><b>${(vH+vF)}</b><br>${vM.toLocaleString()} F</td>
         </tr>`;
     });
@@ -139,8 +152,11 @@ function render() {
     if (chart) chart.destroy();
     chart = new Chart(document.getElementById('myChart'), {
         type: 'doughnut',
-        data: { labels: Object.keys(graphData), datasets: [{ data: Object.values(graphData), backgroundColor: ['#0F1B42','#B8972A','#6E8CB5','#10B981','#E26B60'] }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        data: { 
+            labels: Object.keys(graphData), 
+            datasets: [{ data: Object.values(graphData), backgroundColor: ['#0F1B42','#B8972A','#6E8CB5','#10B981','#E26B60','#F59E0B'] }] 
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } } }
     });
 }
 
